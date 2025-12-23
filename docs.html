@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stars2Cells (S2C) — Documentation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="S2C_logo.png" />
+  <link rel="apple-touch-icon" href="S2C_logo.png" />
+  <link rel="canonical" href="https://ariasarch.github.io/Stars2Cells/docs.html" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Helvetica Neue',Arial,sans-serif}
+    body{background:#000;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+    .container{max-width:1000px;width:100%;padding:20px}
+    .header{text-align:center;padding:40px 0 10px}
+    .logo-image{max-width:240px;width:100%;height:auto}
+    .tagline{font-size:22px;color:#a9a9a9;margin:14px 0 6px;font-weight:300}
+    .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
+    .nav-tabs{display:flex;justify-content:center;gap:10px;margin:30px 0;border-bottom:2px solid #2a2a2a}
+    .nav-tab{padding:12px 24px;background:transparent;color:#a9a9a9;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px;text-decoration:none;display:inline-block}
+    .nav-tab:hover{color:#fff;background:#1a1a1a}
+    .nav-tab.active{color:#fff;border-bottom-color:#fff}
+    .section{margin:40px 0}
+    .section-title{font-size:30px;margin-bottom:16px;color:#fff;position:relative;display:inline-block;font-weight:600}
+    .section-title:after{content:'';position:absolute;left:0;bottom:-8px;width:50px;height:3px;background:#444}
+    .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:14px}
+    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:16px 0;white-space:pre-wrap}
+    .card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:22px;margin:18px 0}
+    .card h3{font-size:20px;margin-bottom:10px}
+    .card p{color:#a9a9a9;line-height:1.7}
+    a{color:#ddd}
+    a:hover{color:#fff}
+    footer{margin-top:auto;width:100%;background:#000;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
+    .footer-link{color:#a9a9a9;text-decoration:none}
+    .footer-link:hover{color:#fff}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <img src="S2C_logo.png" alt="Stars2Cells (S2C) logo" class="logo-image" />
+      <p class="tagline">Documentation</p>
+      <span class="version-badge">S2C docs • v0.1.0</span>
+    </header>
+
+    <nav class="nav-tabs">
+      <a class="nav-tab" href="index.html">Overview</a>
+      <a class="nav-tab active" href="docs.html">Documentation</a>
+      <a class="nav-tab" href="installation.html">Installation</a>
+      <a class="nav-tab" href="resources.html">Resources</a>
+    </nav>
+
+    <section class="section">
+      <h2 class="section-title">Core idea</h2>
+      <p class="section-content">
+        S2C matches neurons across sessions by leveraging *local geometric structure* (constellations) instead of a single global alignment.
+        Quads are sampled across scales, hashed into invariant signatures, and used to propose correspondences that are verified via local transform hypotheses.
+      </p>
+    </section>
+
+    <div class="card">
+      <h3>Inputs</h3>
+      <p>ROI spatial footprints or centroids per session (optionally with shape descriptors: area, convexity, spatial entropy).</p>
+    </div>
+
+    <div class="card">
+      <h3>Outputs</h3>
+      <p>Cross-session match list (ID registry), confidence scores, QC summaries, and optional diagnostic plots.</p>
+    </div>
+
+    <section class="section">
+      <h2 class="section-title">Pseudo-pipeline</h2>
+      <div class="code-block">
+1) Extract ROIs / centroids
+2) Draw quads across multiple size scales
+3) Hash quads into invariant signatures
+4) Retrieve candidate correspondences via hash matches
+5) Generate local transform hypotheses
+6) Verify via reprojection + descriptor filtering
+7) Consensus selection + registry construction
+8) QC: match density, residual errors, outlier maps
+      </div>
+      <p class="section-content">
+        Want to keep this page minimal? Replace the above with a diagram later.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Citing Stars2Cells</h2>
+      <p class="section-content">
+        If you add a <code>CITATION.cff</code> file, GitHub will show a “Cite this repository” button automatically.
+        (If you want, I’ll generate one that matches your preferred citation.)
+      </p>
+    </section>
+  </div>
+
+  <footer>
+    <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells">GitHub Repository</a>
+    <div style="margin-top:12px;color:#666;font-size:14px;">© 2025 Ari Peden-Asarch • Stars2Cells (S2C)</div>
+  </footer>
+</body>
+</html>
