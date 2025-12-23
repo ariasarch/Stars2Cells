@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stars2Cells (S2C) — Installation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="S2C_logo.png" />
+  <link rel="apple-touch-icon" href="S2C_logo.png" />
+  <link rel="canonical" href="https://ariasarch.github.io/Stars2Cells/installation.html" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Helvetica Neue',Arial,sans-serif}
+    body{background:#000;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+    .container{max-width:1000px;width:100%;padding:20px}
+    .header{text-align:center;padding:40px 0 10px}
+    .logo-image{max-width:240px;width:100%;height:auto}
+    .tagline{font-size:22px;color:#a9a9a9;margin:14px 0 6px;font-weight:300}
+    .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
+    .nav-tabs{display:flex;justify-content:center;gap:10px;margin:30px 0;border-bottom:2px solid #2a2a2a}
+    .nav-tab{padding:12px 24px;background:transparent;color:#a9a9a9;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px;text-decoration:none;display:inline-block}
+    .nav-tab:hover{color:#fff;background:#1a1a1a}
+    .nav-tab.active{color:#fff;border-bottom-color:#fff}
+    .section{margin:40px 0}
+    .section-title{font-size:30px;margin-bottom:16px;color:#fff;position:relative;display:inline-block;font-weight:600}
+    .section-title:after{content:'';position:absolute;left:0;bottom:-8px;width:50px;height:3px;background:#444}
+    .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:14px}
+    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:16px 0;white-space:pre-wrap}
+    .note{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:18px;color:#a9a9a9}
+    footer{margin-top:auto;width:100%;background:#000;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
+    .footer-link{color:#a9a9a9;text-decoration:none}
+    .footer-link:hover{color:#fff}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <img src="S2C_logo.png" alt="Stars2Cells (S2C) logo" class="logo-image" />
+      <p class="tagline">Installation</p>
+      <span class="version-badge">S2C install • v0.1.0</span>
+    </header>
+
+    <nav class="nav-tabs">
+      <a class="nav-tab" href="index.html">Overview</a>
+      <a class="nav-tab" href="docs.html">Documentation</a>
+      <a class="nav-tab active" href="installation.html">Installation</a>
+      <a class="nav-tab" href="resources.html">Resources</a>
+    </nav>
+
+    <section class="section">
+      <h2 class="section-title">Quick start (editable)</h2>
+      <p class="section-content">
+        Replace the commands below with your real installation once the repo structure stabilizes.
+      </p>
+
+      <div class="code-block">
+# 1) Clone
+git clone https://github.com/ariasarch/Stars2Cells.git
+cd Stars2Cells
+
+# 2) (Recommended) Create env
+conda create -n s2c python=3.11 -y
+conda activate s2c
+
+# 3) Install deps (choose one)
+pip install -r requirements.txt
+# or: pip install -e .
+
+# 4) Run example (placeholder)
+python -m s2c.examples.quickstart
+      </div>
+
+      <div class="note">
+        <strong style="color:#fff;">Note:</strong>
+        If this website repo contains only the static site, put your real code repo link here and replace the commands to match it.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Recommended environment</h2>
+      <p class="section-content">
+        Python 3.10–3.12, NumPy/SciPy, and a standard scientific stack. If you use PyTorch/JAX later, document GPU support here.
+      </p>
+    </section>
+  </div>
+
+  <footer>
+    <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells">GitHub Repository</a>
+    <div style="margin-top:12px;color:#666;font-size:14px;">© 2025 Ari Peden-Asarch • Stars2Cells (S2C)</div>
+  </footer>
+</body>
+</html>
