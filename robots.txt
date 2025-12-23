@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ariasarch.github.io/Stars2Cells/sitemap.xml
