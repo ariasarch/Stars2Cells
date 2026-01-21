@@ -2,40 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Stars2Cells (S2C) — Cross-Session Neuron Matching</title>
+  <title>Stars2Cells (S2C) | Cross-Session Neuron Tracking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="S2C_logo.png" />
   <link rel="apple-touch-icon" href="S2C_logo.png" />
 
-  <!-- 🔍 SEO -->
-  <meta name="description" content="Stars2Cells (S2C) — a constellation-inspired neuron matching method for cross-session calcium imaging. Robust alignment using quad-based geometric hashing and local transform hypotheses.">
-  <meta name="keywords" content="Stars2Cells, S2C, neuron matching, cell registration, calcium imaging, miniscope, one-photon imaging, geometric hashing, astrometry, constellation matching, cross-session alignment, ROI matching, neuroscience software">
+  <!-- SEO -->
+  <meta name="description" content="Stars2Cells (S2C) is a constellation-inspired neuron tracking pipeline for matching neurons across calcium imaging sessions using quad-based geometric hashing and RANSAC refinement.">
+  <meta name="keywords" content="Stars2Cells, S2C, neuron tracking, cell registration, calcium imaging, miniscope, quad hashing, astrometry, RANSAC, longitudinal neuroscience">
   <meta name="robots" content="index, follow">
-  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-  <meta name="bingbot" content="index, follow">
 
-  <!-- 🌐 Canonical URL (EDIT THIS) -->
   <link rel="canonical" href="https://ariasarch.github.io/Stars2Cells/" />
 
-  <!-- 📘 Open Graph -->
-  <meta property="og:title" content="Stars2Cells (S2C) — Cross-Session Neuron Matching">
-  <meta property="og:description" content="Constellation-inspired neuron matching for cross-session calcium imaging: quad hashing + local transform hypotheses for robust alignment.">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Stars2Cells (S2C) | Cross-Session Neuron Tracking">
+  <meta property="og:description" content="Robust neuron tracking across sessions using constellation-inspired geometric matching.">
   <meta property="og:url" content="https://ariasarch.github.io/Stars2Cells/">
-  <meta property="og:image" content="https://raw.githubusercontent.com/ariasarch/Stars2Cells/main/S2C_logo.png">
+  <meta property="og:image" content="https://raw.githubusercontent.com/ariasarch/Stars2Cells_Alpha_Release/main/S2C_logo.png">
   <meta property="og:type" content="website">
 
-  <!-- 🐦 Twitter Card -->
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Stars2Cells (S2C)">
-  <meta name="twitter:description" content="Constellation-inspired neuron matching for cross-session calcium imaging.">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/ariasarch/Stars2Cells/main/S2C_logo.png">
-
-  <!-- 📱 Mobile / PWA friendliness -->
-  <meta name="theme-color" content="#000000">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="twitter:description" content="Constellation-inspired neuron tracking for calcium imaging.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/ariasarch/Stars2Cells_Alpha_Release/main/S2C_logo.png">
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -43,24 +35,15 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Stars2Cells (S2C)",
-    "alternateName": "S2C",
     "url": "https://ariasarch.github.io/Stars2Cells/",
-    "image": "https://raw.githubusercontent.com/ariasarch/Stars2Cells/main/S2C_logo.png",
-    "description": "Stars2Cells (S2C) is a constellation-inspired neuron matching method for cross-session calcium imaging. It uses quad-based geometric hashing and local transform hypotheses to robustly align and register ROIs across sessions.",
-    "softwareVersion": "0.1.0",
+    "description": "Stars2Cells is a neuron tracking pipeline for matching neurons across calcium imaging sessions using quad-based geometric hashing and RANSAC refinement.",
+    "softwareVersion": "0.1.0-alpha",
     "applicationCategory": "ScientificSoftware",
-    "applicationSubCategory": "Neuroscience data analysis",
-    "operatingSystem": "macOS; Windows; Linux",
-    "downloadUrl": "https://github.com/ariasarch/Stars2Cells",
-    "license": "https://github.com/ariasarch/Stars2Cells/blob/main/LICENSE",
+    "operatingSystem": "macOS, Windows, Linux",
+    "downloadUrl": "https://github.com/ariasarch/Stars2Cells_Alpha_Release",
     "author": {
       "@type": "Person",
       "name": "Ari Peden-Asarch"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
     }
   }
   </script>
@@ -75,135 +58,119 @@
     .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
 
     .nav-tabs{display:flex;justify-content:center;gap:10px;margin:40px 0;border-bottom:2px solid #2a2a2a}
-    .nav-tab{padding:12px 24px;background:transparent;color:#a9a9a9;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px;text-decoration:none;display:inline-block}
-    .nav-tab:hover{color:#fff;background:#1a1a1a}
+    .nav-tab{padding:12px 24px;color:#a9a9a9;text-decoration:none;border-bottom:2px solid transparent}
     .nav-tab.active{color:#fff;border-bottom-color:#fff}
 
     .section{margin:60px 0}
-    .section-title{font-size:32px;margin-bottom:20px;color:#fff;position:relative;display:inline-block;font-weight:600}
-    .section-title:after{content:'';position:absolute;left:0;bottom:-8px;width:50px;height:3px;background:#444}
+    .section-title{font-size:32px;margin-bottom:20px;font-weight:600}
     .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:20px}
 
     .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin:40px 0}
-    .feature{background:#1e1e1e;border-radius:12px;padding:30px;transition:.3s;border:1px solid #2a2a2a}
-    .feature:hover{transform:translateY(-5px);border-color:#444;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-    .feature-icon{font-size:36px;margin-bottom:20px}
-    .feature-title{font-size:22px;margin-bottom:12px;color:#fff;font-weight:600}
-    .feature-description{font-size:16px;color:#a9a9a9;line-height:1.6}
+    .feature{background:#1e1e1e;border-radius:12px;padding:30px;border:1px solid #2a2a2a}
+    .feature-title{font-size:22px;margin-bottom:12px}
 
-    .cta-section{text-align:center;margin:60px 0;padding:40px;background:#1a1a1a;border-radius:16px;border:1px solid #2a2a2a}
-    .cta-title{font-size:32px;margin-bottom:10px;font-weight:600}
-    .cta-subtitle{font-size:18px;color:#a9a9a9;margin-bottom:24px}
-    .download-button{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(90deg,#3a3a3a,#4a4a4a);color:#fff;padding:16px 28px;border-radius:30px;font-size:18px;font-weight:600;text-decoration:none;transition:.3s;border:none;cursor:pointer}
-    .download-button:hover{background:linear-gradient(90deg,#4a4a4a,#5a5a5a);transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,.5)}
-    .download-info{margin-top:10px;font-size:14px;color:#777}
+    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:monospace;font-size:14px;color:#ccc;white-space:pre-wrap}
 
-    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:20px 0;white-space:pre-wrap}
-
-    footer{margin-top:auto;width:100%;background:#000;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
-    .footer-content{max-width:1000px;margin:0 auto;padding:0 20px}
-    .footer-links{display:flex;justify-content:center;gap:30px;margin-bottom:20px;flex-wrap:wrap}
-    .footer-link{color:#a9a9a9;text-decoration:none;transition:color .2s}
+    footer{margin-top:auto;width:100%;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
+    .footer-link{color:#a9a9a9;text-decoration:none;margin:0 12px}
     .footer-link:hover{color:#fff}
     .footer-text{font-size:14px;color:#666;margin-top:20px}
-
-    @media (max-width:768px){
-      .logo-image{max-width:320px}
-      .tagline{font-size:20px}
-      .cta-section{padding:28px}
-    }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <header class="header">
-      <img src="S2C_logo.png" alt="Stars2Cells (S2C) logo" class="logo-image" />
-      <p class="tagline">Stars2Cells (S2C)</p>
-      <span class="version-badge">Website • v0.1.0</span>
-    </header>
+<div class="container">
 
-    <nav class="nav-tabs">
-      <a class="nav-tab active" href="index.html">Overview</a>
-      <a class="nav-tab" href="docs.html">Documentation</a>
-      <a class="nav-tab" href="installation.html">Installation</a>
-      <a class="nav-tab" href="resources.html">Resources</a>
-    </nav>
+<header class="header">
+  <img src="S2C_logo.png" class="logo-image" alt="Stars2Cells logo">
+  <p class="tagline">Constellation-inspired neuron tracking across sessions</p>
+  <span class="version-badge">Early Release • v0.1.0-alpha</span>
+</header>
 
-    <section class="section">
-      <h2 class="section-title">🌌 Constellation-Inspired Neuron Matching</h2>
-      <p class="section-content">
-        Stars2Cells is a cross-session neuron matching framework inspired by astronomical star-matching (e.g., constellation/asterism matching).
-        It focuses on robust registration under drift, nonrigid changes, and partial overlap by combining geometric hashing with local transform hypothesis testing.
-      </p>
-      <p class="section-content">
-        The goal: reliably identify the same neuron across sessions using spatial relationships—rather than relying on a single global transform or fragile heuristics.
-      </p>
-    </section>
+<nav class="nav-tabs">
+  <a class="nav-tab active" href="index.html">Overview</a>
+  <a class="nav-tab" href="docs.html">Documentation</a>
+  <a class="nav-tab" href="installation.html">Installation</a>
+  <a class="nav-tab" href="resources.html">Resources</a>
+</nav>
 
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon">🧩</div>
-        <h3 class="feature-title">Quad-Based Hashing</h3>
-        <p class="feature-description">Sample quads across scales to create local, discriminative geometric signatures.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🧭</div>
-        <h3 class="feature-title">Local Transform Hypotheses</h3>
-        <p class="feature-description">Test candidate local alignments rather than committing to a single global affine model.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🧠</div>
-        <h3 class="feature-title">Neuron-Aware Filtering</h3>
-        <p class="feature-description">Shape descriptors (area, convexity, entropy) help reject implausible matches early.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📈</div>
-        <h3 class="feature-title">Scale & Partial Overlap</h3>
-        <p class="feature-description">Designed to be robust when fields of view shift or only partially overlap across days.</p>
-      </div>
-    </div>
+<section class="section">
+  <h2 class="section-title">What is Stars2Cells?</h2>
+  <p class="section-content">
+    Stars2Cells is a neuron tracking pipeline for longitudinal calcium imaging experiments.
+    It identifies and matches individual neurons across sessions using geometric relationships
+    rather than relying on a single global alignment.
+  </p>
+  <p class="section-content">
+    The method is inspired by astronomical star matching, where constellations are recognized
+    despite rotation, translation, missing points, or partial overlap.
+  </p>
+</section>
 
-    <div class="cta-section">
-      <h2 class="cta-title">Get Started</h2>
-      <p class="cta-subtitle">Install / run instructions and docs live here.</p>
-      <div>
-        <a class="download-button" style="margin-right:12px" href="installation.html">
-          <span>🧰</span><span>Installation</span>
-        </a>
-        <a class="download-button" style="margin-right:12px;background:linear-gradient(90deg,#454545,#595959)" href="docs.html">
-          <span>📘</span><span>Documentation</span>
-        </a>
-        <a class="download-button" href="https://github.com/ariasarch/Stars2Cells">
-          <span>↗</span><span>GitHub Repo</span>
-        </a>
-      </div>
-      <p class="download-info">Edit the repo links + canonical URL if your repo name differs.</p>
-    </div>
+<section class="section">
+  <h2 class="section-title">When should you use it?</h2>
+  <p class="section-content">
+    Stars2Cells is designed for multi-session or longitudinal experiments where neuron identity
+    must be preserved across days or conditions.
+  </p>
+  <p class="section-content">
+    Common use cases include pre and post intervention studies, drifted fields of view,
+    partial overlap between sessions, and recordings with cell turnover.
+  </p>
+</section>
 
-    <section class="section">
-      <h2 class="section-title">Algorithm (at a glance)</h2>
-      <div class="code-block">
-ROIs / Centroids → Multi-scale quad sampling → Quad hashing →
-Candidate correspondence proposals → Local transform hypothesis testing →
-Descriptor filtering (area/convexity/entropy) → Match consensus →
-Cross-session neuron registry + QC outputs
-      </div>
-    </section>
+<div class="features">
+  <div class="feature">
+    <h3 class="feature-title">Quad-based geometric hashing</h3>
+    <p>Local constellations of four neurons create invariant spatial signatures.</p>
   </div>
+  <div class="feature">
+    <h3 class="feature-title">Voting-based correspondence</h3>
+    <p>Each quad match votes for neuron pairs, producing robust consensus matches.</p>
+  </div>
+  <div class="feature">
+    <h3 class="feature-title">RANSAC refinement</h3>
+    <p>Outlier matches are rejected while estimating the global affine transform.</p>
+  </div>
+  <div class="feature">
+    <h3 class="feature-title">Quality control outputs</h3>
+    <p>Residuals, inlier rates, and match confidence scores support inspection.</p>
+  </div>
+</div>
 
-  <footer>
-    <div class="footer-content">
-      <div class="footer-links">
-        <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells">GitHub Repository</a>
-        <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells/issues">Report Issues</a>
-        <a class="footer-link" href="docs.html">Documentation</a>
-        <a class="footer-link" href="resources.html">Community</a>
-      </div>
-      <p class="footer-text">
-        © 2025 Ari Peden-Asarch • Stars2Cells (S2C) • See <a class="footer-link" href="LICENSE">License</a>
-      </p>
-    </div>
-  </footer>
+<section class="section">
+  <h2 class="section-title">Pipeline overview</h2>
+  <div class="code-block">
+Neuron centroids
+→ Quad generation
+→ Similarity threshold estimation
+→ Quad matching and voting
+→ RANSAC refinement
+→ Final neuron identity assignment
+→ Match tables and QC outputs
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Status and citation</h2>
+  <p class="section-content">
+    Stars2Cells is currently an early release. Features, APIs, and documentation
+    may change as the pipeline is validated across datasets.
+  </p>
+  <p class="section-content">
+    Manuscript in preparation. Methodological inspiration includes astronomical
+    star matching and the original RANSAC algorithm.
+  </p>
+</section>
+
+</div>
+
+<footer>
+  <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells_Alpha_Release">GitHub Repository</a>
+  <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells_Alpha_Release/issues">Report Issues</a>
+  <a class="footer-link" href="docs.html">Documentation</a>
+  <p class="footer-text">© 2025 Ari Peden-Asarch | Neumaier Lab | University of Washington</p>
+</footer>
+
 </body>
 </html>
