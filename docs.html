@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Stars2Cells (S2C) — Documentation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Stars2Cells (S2C) documentation. Early release. Local-geometry (constellation) neuron matching across sessions." />
   <link rel="icon" type="image/png" href="S2C_logo.png" />
   <link rel="apple-touch-icon" href="S2C_logo.png" />
   <link rel="canonical" href="https://ariasarch.github.io/Stars2Cells/docs.html" />
@@ -16,20 +17,46 @@
     .logo-image{max-width:240px;width:100%;height:auto}
     .tagline{font-size:22px;color:#a9a9a9;margin:14px 0 6px;font-weight:300}
     .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
+
+    .early-badge{
+      display:inline-block;
+      background:#1a1a1a;
+      border:1px solid #2a2a2a;
+      color:#ddd;
+      padding:10px 14px;
+      border-radius:12px;
+      margin-top:18px;
+      font-size:14px;
+      line-height:1.5;
+      max-width:820px;
+    }
+    .early-badge strong{color:#fff}
+
     .nav-tabs{display:flex;justify-content:center;gap:10px;margin:30px 0;border-bottom:2px solid #2a2a2a}
     .nav-tab{padding:12px 24px;background:transparent;color:#a9a9a9;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px;text-decoration:none;display:inline-block}
     .nav-tab:hover{color:#fff;background:#1a1a1a}
     .nav-tab.active{color:#fff;border-bottom-color:#fff}
+
     .section{margin:40px 0}
     .section-title{font-size:30px;margin-bottom:16px;color:#fff;position:relative;display:inline-block;font-weight:600}
     .section-title:after{content:'';position:absolute;left:0;bottom:-8px;width:50px;height:3px;background:#444}
     .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:14px}
+
     .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:16px 0;white-space:pre-wrap}
     .card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:22px;margin:18px 0}
     .card h3{font-size:20px;margin-bottom:10px}
     .card p{color:#a9a9a9;line-height:1.7}
+
+    .two-col{display:grid;grid-template-columns:1fr;gap:18px}
+    @media (min-width: 900px){ .two-col{grid-template-columns:1fr 1fr} }
+
+    .list{margin:10px 0 0 18px;color:#a9a9a9;line-height:1.7}
+    .list li{margin:6px 0}
+    code{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:2px 6px;color:#ddd}
+
     a{color:#ddd}
     a:hover{color:#fff}
+
     footer{margin-top:auto;width:100%;background:#000;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
     .footer-link{color:#a9a9a9;text-decoration:none}
     .footer-link:hover{color:#fff}
@@ -42,6 +69,11 @@
       <img src="S2C_logo.png" alt="Stars2Cells (S2C) logo" class="logo-image" />
       <p class="tagline">Documentation</p>
       <span class="version-badge">S2C docs • v0.1.0</span>
+
+      <div class="early-badge">
+        <strong>Early release:</strong> This documentation reflects an early release of Stars2Cells (S2C). APIs, file formats, and outputs may change.
+        There is currently <strong>no bundled example dataset</strong>; documentation focuses on concepts + expected inputs/outputs.
+      </div>
     </header>
 
     <nav class="nav-tabs">
@@ -54,35 +86,76 @@
     <section class="section">
       <h2 class="section-title">Core idea</h2>
       <p class="section-content">
-        S2C matches neurons across sessions by leveraging *local geometric structure* (constellations) instead of a single global alignment.
-        Quads are sampled across scales, hashed into invariant signatures, and used to propose correspondences that are verified via local transform hypotheses.
+        Stars2Cells (S2C) matches neurons across sessions by leveraging <em>local geometric structure</em> (constellations)
+        instead of a single global alignment. Quads are sampled across scales, hashed into invariant signatures,
+        and used to propose correspondences that are verified via local transform hypotheses.
+      </p>
+      <p class="section-content">
+        One framing that helps: <span title="Spanish practice">robusto (robust)</span> to local non-linearities,
+        because S2C does not rely on a single transform for the entire field of view.
       </p>
     </section>
 
-    <div class="card">
-      <h3>Inputs</h3>
-      <p>ROI spatial footprints or centroids per session (optionally with shape descriptors: area, convexity, spatial entropy).</p>
-    </div>
+    <section class="section">
+      <h2 class="section-title">Inputs and outputs</h2>
 
-    <div class="card">
-      <h3>Outputs</h3>
-      <p>Cross-session match list (ID registry), confidence scores, QC summaries, and optional diagnostic plots.</p>
-    </div>
+      <div class="two-col">
+        <div class="card">
+          <h3>Inputs</h3>
+          <p>
+            Per session, provide either ROI spatial footprints or centroid coordinates. Optional shape descriptors
+            can improve filtering and quality control.
+          </p>
+          <ul class="list">
+            <li><strong>Required (minimum):</strong> centroid coordinates per session (x, y) <em>or</em> ROI footprints</li>
+            <li><strong>Optional descriptors:</strong> area, convexity, spatial entropy, etc.</li>
+            <li><strong>Optional metadata:</strong> session IDs, animal IDs, imaging plane identifiers</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Outputs</h3>
+          <p>
+            Cross-session match registry with confidence scores, plus QC summaries and optional diagnostic plots.
+          </p>
+          <ul class="list">
+            <li><strong>Match list / registry:</strong> stable IDs across sessions</li>
+            <li><strong>Confidence:</strong> per-match quality or score</li>
+            <li><strong>QC summaries:</strong> residual distributions, outlier maps, match density</li>
+            <li><strong>Optional plots:</strong> alignment diagnostics, mismatch heatmaps</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Environment</h2>
+      <p class="section-content">
+        This early release is tested against the following versions (Python <code>3.11.14</code>):
+      </p>
+      <div class="code-block">matplotlib==3.10.8
+numpy==2.4.0
+psutil==7.0.0
+PyQt5==5.15.11
+pyqtgraph==0.14.0
+scipy==1.16.3</div>
+      <p class="section-content">
+        Note: there is currently no example data packaged with the repo, so the UI and pipeline are intended to be run on your own session exports.
+      </p>
+    </section>
 
     <section class="section">
       <h2 class="section-title">Pseudo-pipeline</h2>
-      <div class="code-block">
-1) Extract ROIs / centroids
+      <div class="code-block">1) Extract ROIs / centroids
 2) Draw quads across multiple size scales
 3) Hash quads into invariant signatures
 4) Retrieve candidate correspondences via hash matches
 5) Generate local transform hypotheses
 6) Verify via reprojection + descriptor filtering
 7) Consensus selection + registry construction
-8) QC: match density, residual errors, outlier maps
-      </div>
+8) QC: match density, residual errors, outlier maps</div>
       <p class="section-content">
-        Want to keep this page minimal? Replace the above with a diagram later.
+        If you want to keep this page minimal for now, you can swap the above for a diagram later.
       </p>
     </section>
 
@@ -90,7 +163,7 @@
       <h2 class="section-title">Citing Stars2Cells</h2>
       <p class="section-content">
         If you add a <code>CITATION.cff</code> file, GitHub will show a “Cite this repository” button automatically.
-        (If you want, I’ll generate one that matches your preferred citation.)
+        If you want, I can draft one that matches your preferred citation format.
       </p>
     </section>
   </div>
