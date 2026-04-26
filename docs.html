@@ -2,22 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Stars2Cells (S2C) — Documentation</title>
+  <title>Stars2Cells (S2C) | Documentation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Stars2Cells (S2C) documentation. Early release. Local-geometry (constellation) neuron matching across sessions." />
+
   <link rel="icon" type="image/png" href="S2C_logo.png" />
   <link rel="apple-touch-icon" href="S2C_logo.png" />
+
+  <meta name="description" content="Stars2Cells (S2C) documentation. Inputs, outputs, and parameter tuning for the constellation-inspired neuron tracking pipeline.">
+  <meta name="keywords" content="Stars2Cells, S2C, documentation, neuron tracking, calcium imaging, parameter tuning, quad hashing, RANSAC">
+  <meta name="robots" content="index, follow">
+
   <link rel="canonical" href="https://ariasarch.github.io/Stars2Cells/docs.html" />
+
+  <meta property="og:title" content="Stars2Cells (S2C) | Documentation">
+  <meta property="og:description" content="Inputs, outputs, and parameter tuning for the Stars2Cells pipeline.">
+  <meta property="og:url" content="https://ariasarch.github.io/Stars2Cells/docs.html">
+  <meta property="og:image" content="https://raw.githubusercontent.com/ariasarch/Stars2Cells_Alpha_Release/main/S2C_logo.png">
+  <meta property="og:type" content="website">
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Helvetica Neue',Arial,sans-serif}
     body{background:#000;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
     .container{max-width:1000px;width:100%;padding:20px}
-    .header{text-align:center;padding:40px 0 10px}
-    .logo-image{max-width:240px;width:100%;height:auto}
-    .tagline{font-size:22px;color:#a9a9a9;margin:14px 0 6px;font-weight:300}
-    .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
 
+    /* ── header ── */
+    .header{text-align:center;padding:60px 0 40px}
+    .logo-image{max-width:420px;width:100%;height:auto}
+    .tagline{font-size:24px;color:#a9a9a9;margin:20px 0 6px;font-weight:300}
+    .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
     .early-badge{
       display:inline-block;
       background:#1a1a1a;
@@ -28,170 +40,1437 @@
       margin-top:18px;
       font-size:14px;
       line-height:1.5;
-      max-width:820px;
+      max-width:780px;
     }
     .early-badge strong{color:#fff}
 
-    .nav-tabs{display:flex;justify-content:center;gap:10px;margin:30px 0;border-bottom:2px solid #2a2a2a}
-    .nav-tab{padding:12px 24px;background:transparent;color:#a9a9a9;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px;text-decoration:none;display:inline-block}
+    /* ── nav ── */
+    .nav-tabs{display:flex;justify-content:center;gap:10px;margin:40px 0;border-bottom:2px solid #2a2a2a}
+    .nav-tab{padding:12px 24px;color:#a9a9a9;text-decoration:none;border-bottom:2px solid transparent;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px}
     .nav-tab:hover{color:#fff;background:#1a1a1a}
     .nav-tab.active{color:#fff;border-bottom-color:#fff}
 
-    .section{margin:40px 0}
-    .section-title{font-size:30px;margin-bottom:16px;color:#fff;position:relative;display:inline-block;font-weight:600}
-    .section-title:after{content:'';position:absolute;left:0;bottom:-8px;width:50px;height:3px;background:#444}
-    .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:14px}
+    /* ── sections ── */
+    .section{margin:60px 0;scroll-margin-top:30px}
+    .section-title{font-size:32px;margin-bottom:20px;font-weight:600}
+    .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:20px}
+    .section-content strong{color:#fff}
+    .section-content em{color:#fff;font-style:italic}
 
-    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:16px 0;white-space:pre-wrap}
+    h2.subhead{font-size:24px;color:#fff;margin:36px 0 14px;font-weight:600}
+    h3.minihead{font-size:14px;color:#fff;margin:24px 0 12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+
+    /* ── code & inline code ── */
+    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:18px 20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:16px 0;white-space:pre;line-height:1.55}
+    .code-block.wrap{white-space:pre-wrap}
+    code{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:2px 6px;color:#ddd;font-family:Consolas,Monaco,monospace;font-size:0.9em}
+
+    /* ── feature cards (kept from index) ── */
+    .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin:30px 0}
+    .feature{background:#1e1e1e;border-radius:12px;padding:24px;border:1px solid #2a2a2a}
+    .feature-title{font-size:20px;margin-bottom:10px;color:#fff;font-weight:600}
+    .feature p{color:#a9a9a9;line-height:1.7;font-size:15px}
+
+    /* ── general cards ── */
     .card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:12px;padding:22px;margin:18px 0}
-    .card h3{font-size:20px;margin-bottom:10px}
-    .card p{color:#a9a9a9;line-height:1.7}
-
+    .card h3{font-size:20px;margin-bottom:10px;color:#fff;font-weight:600}
+    .card p{color:#a9a9a9;line-height:1.7;margin-bottom:8px}
+    .card p:last-child{margin-bottom:0}
     .two-col{display:grid;grid-template-columns:1fr;gap:18px}
     @media (min-width: 900px){ .two-col{grid-template-columns:1fr 1fr} }
 
-    .list{margin:10px 0 0 18px;color:#a9a9a9;line-height:1.7}
-    .list li{margin:6px 0}
-    code{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:2px 6px;color:#ddd}
+    .list{margin:8px 0 0 18px;color:#a9a9a9;line-height:1.7}
+    .list li{margin:5px 0}
+    .list li strong{color:#fff}
 
-    a{color:#ddd}
-    a:hover{color:#fff}
+    /* ── tables ── */
+    .table-wrap{overflow-x:auto;margin:16px 0}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #2a2a2a;vertical-align:top}
+    th{color:#fff;font-weight:600;border-bottom:1px solid #444;background:#1a1a1a}
+    td{color:#a9a9a9}
+    td code{font-size:0.85em}
+    .ok{color:#fff}
+    .no{color:#666}
 
-    footer{margin-top:auto;width:100%;background:#000;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
-    .footer-link{color:#a9a9a9;text-decoration:none}
+    /* ── Goldilocks 3-card grid ── */
+    .gold-block{
+      background:#1a1a1a;
+      border:1px solid #2a2a2a;
+      border-radius:12px;
+      margin:22px 0;
+      overflow:hidden;
+    }
+    .gold-head{
+      padding:18px 22px;
+      border-bottom:1px solid #2a2a2a;
+      background:#151515;
+    }
+    .gold-head h3{
+      font-size:18px;
+      color:#fff;
+      margin-bottom:6px;
+      font-weight:600;
+    }
+    .gold-head .desc{
+      color:#a9a9a9;
+      font-size:14px;
+      line-height:1.55;
+    }
+    .gold-meta{
+      margin-top:8px;
+      font-size:12px;
+      color:#888;
+      font-family:Consolas,Monaco,monospace;
+    }
+    .gold-meta span{margin-right:16px}
+    .gold-meta span strong{color:#ccc;font-weight:600}
+
+    .gold-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:1px;
+      background:#2a2a2a;
+    }
+    @media (min-width: 760px){ .gold-grid{grid-template-columns:1fr 1fr 1fr} }
+
+    .gold-cell{
+      padding:18px 20px;
+      background:#1a1a1a;
+    }
+    .gold-cell.warm{background:#202020;border-top:2px solid #fff}
+    .gold-cell.cold,.gold-cell.hot{border-top:2px solid #444}
+    .gold-cell .label{
+      font-size:11px;
+      color:#666;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      margin-bottom:8px;
+      font-weight:600;
+      font-family:Consolas,Monaco,monospace;
+    }
+    .gold-cell.warm .label{color:#fff}
+    .gold-cell .value{
+      font-size:13px;
+      color:#fff;
+      margin-bottom:8px;
+      font-family:Consolas,Monaco,monospace;
+    }
+    .gold-cell .body{
+      color:#a9a9a9;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    /* ── SVG figures ── */
+    .figure{margin:30px auto;text-align:center}
+    .figure svg{max-width:100%;height:auto;display:block;margin:0 auto}
+    .figure .caption{
+      margin-top:12px;
+      color:#888;
+      font-size:13px;
+      max-width:60ch;
+      margin-left:auto;
+      margin-right:auto;
+      line-height:1.5;
+      font-style:italic;
+    }
+    .figure .caption strong{
+      font-style:normal;
+      font-weight:600;
+      color:#ccc;
+      margin-right:6px;
+    }
+
+    /* ── aside callout ── */
+    .aside{
+      background:#1a1a1a;
+      border:1px solid #2a2a2a;
+      border-left:3px solid #fff;
+      border-radius:8px;
+      padding:14px 20px;
+      margin:22px 0;
+      color:#ddd;
+      font-size:15px;
+      line-height:1.65;
+    }
+    .aside code{background:#000}
+
+    /* ── TOC ── */
+    .toc{
+      background:#1e1e1e;
+      border:1px solid #2a2a2a;
+      border-radius:12px;
+      padding:20px 24px;
+      margin:24px 0;
+    }
+    .toc ol{
+      list-style:none;
+      counter-reset:toc;
+      padding:0;
+      margin:0;
+      column-count:1;
+      column-gap:32px;
+    }
+    @media (min-width:700px){ .toc ol{column-count:2} }
+    .toc li{
+      margin:5px 0;
+      padding-left:32px;
+      position:relative;
+      counter-increment:toc;
+      break-inside:avoid;
+    }
+    .toc li::before{
+      content:counter(toc, decimal-leading-zero);
+      position:absolute;
+      left:0;
+      top:1px;
+      font-family:Consolas,Monaco,monospace;
+      font-size:12px;
+      color:#666;
+    }
+    .toc a{color:#a9a9a9;font-size:14px;line-height:1.6;text-decoration:none}
+    .toc a:hover{color:#fff}
+
+    /* ── details/expandable ── */
+    details{
+      border:1px solid #2a2a2a;
+      border-radius:8px;
+      padding:12px 18px;
+      margin:14px 0;
+      background:#1a1a1a;
+    }
+    details summary{
+      cursor:pointer;
+      font-size:14px;
+      color:#fff;
+      font-weight:600;
+    }
+    details[open] summary{margin-bottom:10px}
+    details > *:not(summary){color:#a9a9a9;font-size:14px;line-height:1.6}
+    details code{background:#000}
+
+    a{color:#fff;text-decoration:underline;text-decoration-color:#444;text-underline-offset:3px}
+    a:hover{text-decoration-color:#fff}
+
+    footer{margin-top:auto;width:100%;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
+    .footer-link{color:#a9a9a9;text-decoration:none;margin:0 12px}
     .footer-link:hover{color:#fff}
+    .footer-text{font-size:14px;color:#666;margin-top:20px}
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <header class="header">
-      <img src="S2C_logo.png" alt="Stars2Cells (S2C) logo" class="logo-image" />
-      <p class="tagline">Documentation</p>
-      <span class="version-badge">S2C docs • v0.1.0</span>
+<div class="container">
 
-      <div class="early-badge">
-        <strong>Early release:</strong> This documentation reflects an early release of Stars2Cells (S2C). APIs, file formats, and outputs may change.
-        There is currently <strong>no bundled example dataset</strong>; documentation focuses on concepts + expected inputs/outputs.
-      </div>
-    </header>
+<header class="header">
+  <img src="S2C_logo.png" class="logo-image" alt="Stars2Cells logo">
+  <p class="tagline">Documentation</p>
+  <span class="version-badge">Early Release • v0.1.0-alpha</span>
+  <div style="margin-top:18px">
+    <span class="early-badge">
+      <strong>Early release.</strong> This page reflects an early release of S2C. APIs, file formats, and outputs may change. There is currently <strong>no bundled example dataset</strong>; documentation focuses on concepts, expected I/O, and parameter tuning.
+    </span>
+  </div>
+</header>
 
-    <nav class="nav-tabs">
-      <a class="nav-tab" href="index.html">Overview</a>
-      <a class="nav-tab active" href="docs.html">Documentation</a>
-      <a class="nav-tab" href="installation.html">Installation</a>
-      <a class="nav-tab" href="resources.html">Resources</a>
-    </nav>
+<nav class="nav-tabs">
+  <a class="nav-tab" href="index.html">Overview</a>
+  <a class="nav-tab active" href="docs.html">Documentation</a>
+  <a class="nav-tab" href="installation.html">Installation</a>
+  <a class="nav-tab" href="resources.html">Resources</a>
+</nav>
 
-    <section class="section">
-      <h2 class="section-title">Core idea</h2>
-      <p class="section-content">
-        Stars2Cells (S2C) matches neurons across sessions by leveraging <em>local geometric structure</em> (constellations)
-        instead of a single global alignment. Quads are sampled across scales, hashed into invariant signatures,
-        and used to propose correspondences that are verified via local transform hypotheses.
-      </p>
-      <p class="section-content">
-        One framing that helps: <span title="Spanish practice">robusto (robust)</span> to local non-linearities,
-        because S2C does not rely on a single transform for the entire field of view.
-      </p>
-    </section>
+<!-- ──────────────────────────── -->
+<!-- TABLE OF CONTENTS            -->
+<!-- ──────────────────────────── -->
+<section class="section" id="contents">
+  <h2 class="section-title">In this guide</h2>
+  <nav class="toc">
+    <ol>
+      <li><a href="#core-idea">The core idea</a></li>
+      <li><a href="#pipeline">The pipeline at a glance</a></li>
+      <li><a href="#inputs">Inputs</a></li>
+      <li><a href="#outputs">Outputs</a></li>
+      <li><a href="#tuning">Parameter tuning (Goldilocks)</a></li>
+      <li><a href="#step1">&nbsp;&nbsp;Step 1 — Quad generation</a></li>
+      <li><a href="#step15">&nbsp;&nbsp;Step 1.5 — Threshold calibration</a></li>
+      <li><a href="#step2">&nbsp;&nbsp;Step 2 — Descriptor matching</a></li>
+      <li><a href="#step25">&nbsp;&nbsp;Step 2.5 — RANSAC verification</a></li>
+      <li><a href="#step3">&nbsp;&nbsp;Step 3 — Hungarian + tracking</a></li>
+      <li><a href="#environment">Environment</a></li>
+      <li><a href="#diagnostic">Diagnostic checklist</a></li>
+      <li><a href="#citing">Citing S2C</a></li>
+    </ol>
+  </nav>
+</section>
 
-    <section class="section">
-      <h2 class="section-title">Inputs and outputs</h2>
+<!-- ──────────────────────────── -->
+<!-- CORE IDEA                    -->
+<!-- ──────────────────────────── -->
+<section class="section" id="core-idea">
+  <h2 class="section-title">The core idea</h2>
 
-      <div class="two-col">
+  <p class="section-content">Stars2Cells matches neurons across imaging sessions the way astronomers plate-solve the night sky — by encoding the relative geometry of small <em>constellations</em> of points into descriptors that don't change when the field rotates, translates, or shifts. Identifying any single neuron is hopeless; identifying four of them at a time is robust.</p>
 
-        <!-- UPDATED INPUTS CARD -->
-        <div class="card">
-          <h3>Inputs</h3>
-          <p>
-            Stars2Cells currently operates on <strong>centroid-based neuron representations</strong>.
-            Each imaging session must be provided as a single <code>.npy</code> file containing a
-            Python dictionary saved with <code>allow_pickle=True</code>.
-          </p>
-          <ul class="list">
-            <li>
-              <strong>File naming:</strong> <code>{animal_id}_{session_id}.npy</code> (numeric IDs only)
-            </li>
-            <li>
-              <strong>Required keys:</strong> <code>centroids_x</code>, <code>centroids_y</code>, <code>roi_ids</code>,
-              <code>subject_id</code>, <code>session_id</code>
-            </li>
-            <li>
-              <strong>Centroids:</strong> pixel coordinates (float or int), equal-length arrays
-            </li>
-            <li>
-              <strong>Minimum size:</strong> ≥ 4 neurons per session (smaller sessions are skipped)
-            </li>
-            <li>
-              <strong>Directory layout:</strong> all session files placed in a single input directory
-            </li>
-          </ul>
-          <p>
-            Additional fields (e.g. footprints, traces, timestamps, shape descriptors) are
-            <span title="Spanish practice">permitidos (permitted)</span> but ignored by the pipeline.
-          </p>
-        </div>
+  <p class="section-content">The unit of information is a <strong>quad</strong>: four neurons, with one pair forming the longest edge (the <em>diagonal</em>) and the other two as <em>third-points</em> sitting off to either side. Project the third-points into a coordinate frame defined by the diagonal, normalize by the diagonal's length, and you get a four-number signature that is invariant to translation, rotation, and uniform scale.</p>
 
-        <div class="card">
-          <h3>Outputs</h3>
-          <p>
-            Cross-session match registry with confidence scores, plus QC summaries and optional diagnostic plots.
-          </p>
-          <ul class="list">
-            <li><strong>Match list / registry:</strong> stable IDs across sessions</li>
-            <li><strong>Confidence:</strong> per-match quality or score</li>
-            <li><strong>QC summaries:</strong> residual distributions, outlier maps, match density</li>
-            <li><strong>Optional plots:</strong> alignment diagnostics, mismatch heatmaps</li>
-          </ul>
-        </div>
+  <div class="figure">
+    <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram of a quad descriptor">
+      <defs>
+        <marker id="arrow-w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff"/>
+        </marker>
+      </defs>
 
-      </div>
-    </section>
+      <!-- LEFT PANEL -->
+      <g transform="translate(40,40)">
+        <text x="150" y="-12" text-anchor="middle" fill="#888" font-family="monospace" font-size="10" letter-spacing="1.5">QUAD IN SESSION A</text>
+        <line x1="40" y1="180" x2="260" y2="60" stroke="#ffffff" stroke-width="2"/>
+        <line x1="120" y1="50" x2="106" y2="125" stroke="#666" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="200" y1="200" x2="186" y2="143" stroke="#666" stroke-width="1" stroke-dasharray="3,3"/>
+        <circle cx="40" cy="180" r="6" fill="#ffffff"/>
+        <circle cx="260" cy="60" r="6" fill="#ffffff"/>
+        <circle cx="120" cy="50" r="5" fill="#888"/>
+        <circle cx="200" cy="200" r="5" fill="#888"/>
+        <text x="28" y="200" fill="#ccc" font-size="14" font-style="italic">A</text>
+        <text x="266" y="56" fill="#ccc" font-size="14" font-style="italic">B</text>
+        <text x="116" y="40" fill="#ccc" font-size="14" font-style="italic">C</text>
+        <text x="206" y="218" fill="#ccc" font-size="14" font-style="italic">D</text>
+        <text x="155" y="105" fill="#aaa" font-family="monospace" font-size="10">L = ‖B − A‖</text>
+      </g>
 
-    <section class="section">
-      <h2 class="section-title">Environment</h2>
-      <p class="section-content">
-        This early release is tested against the following versions (Python <code>3.11.14</code>):
-      </p>
-      <div class="code-block">matplotlib==3.10.8
-numpy==2.4.0
-psutil==7.0.0
-PyQt5==5.15.11
-pyqtgraph==0.14.0
-scipy==1.16.3</div>
-      <p class="section-content">
-        Note: there is currently no example data packaged with the repo, so the UI and pipeline are intended to be run on your own session exports.
-      </p>
-    </section>
+      <!-- arrow + descriptor -->
+      <g transform="translate(345,150)">
+        <text x="0" y="-30" text-anchor="middle" fill="#888" font-family="monospace" font-size="11" letter-spacing="1">PROJECT &amp; NORMALIZE</text>
+        <line x1="-30" y1="0" x2="30" y2="0" stroke="#ffffff" stroke-width="1.5" marker-end="url(#arrow-w)"/>
+        <text x="0" y="32" text-anchor="middle" fill="#fff" font-size="14" font-style="italic">q ∈ ℝ⁴</text>
+      </g>
 
-    <section class="section">
-      <h2 class="section-title">Pseudo-pipeline</h2>
-      <div class="code-block">1) Extract ROIs / centroids
-2) Draw quads across multiple size scales
-3) Hash quads into invariant signatures
-4) Retrieve candidate correspondences via hash matches
-5) Generate local transform hypotheses
-6) Verify via reprojection + descriptor filtering
-7) Consensus selection + registry construction
-8) QC: match density, residual errors, outlier maps</div>
-      <p class="section-content">
-        If you want to keep this page minimal for now, you can swap the above for a diagram later.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2 class="section-title">Citing Stars2Cells</h2>
-      <p class="section-content">
-        If you add a <code>CITATION.cff</code> file, GitHub will show a “Cite this repository” button automatically.
-        If you want, I can draft one that matches your preferred citation format.
-      </p>
-    </section>
+      <!-- RIGHT PANEL -->
+      <g transform="translate(440,40)">
+        <text x="150" y="-12" text-anchor="middle" fill="#888" font-family="monospace" font-size="10" letter-spacing="1.5">QUAD IN SESSION B (ROTATED)</text>
+        <line x1="60" y1="60" x2="240" y2="220" stroke="#ffffff" stroke-width="2"/>
+        <line x1="200" y1="50" x2="160" y2="115" stroke="#666" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="80" y1="190" x2="135" y2="155" stroke="#666" stroke-width="1" stroke-dasharray="3,3"/>
+        <circle cx="60" cy="60" r="6" fill="#ffffff"/>
+        <circle cx="240" cy="220" r="6" fill="#ffffff"/>
+        <circle cx="200" cy="50" r="5" fill="#888"/>
+        <circle cx="80" cy="190" r="5" fill="#888"/>
+        <text x="48" y="56" fill="#ccc" font-size="14" font-style="italic">A</text>
+        <text x="246" y="240" fill="#ccc" font-size="14" font-style="italic">B</text>
+        <text x="208" y="42" fill="#ccc" font-size="14" font-style="italic">C</text>
+        <text x="62" y="208" fill="#ccc" font-size="14" font-style="italic">D</text>
+        <text x="170" y="125" fill="#aaa" font-family="monospace" font-size="10">same q ∈ ℝ⁴</text>
+      </g>
+    </svg>
+    <div class="caption"><strong>Figure 1.</strong>The quad descriptor. A and B are the diagonal endpoints (longest edge); C and D are the third-points. Their coordinates after projection into the diagonal-aligned frame and division by L = ‖B − A‖ give a four-number vector that is identical in both panels despite the rotation.</div>
   </div>
 
-  <footer>
-    <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells">GitHub Repository</a>
-    <div style="margin-top:12px;color:#666;font-size:14px;">© 2025 Ari Peden-Asarch • Stars2Cells (S2C)</div>
-  </footer>
+  <p class="section-content">Two sessions' quads are then directly comparable in ℝ⁴ without ever solving for the unknown transform between them. Once enough quads agree, the transform falls out of them — recovered by RANSAC, used to convert quad-level agreement into a one-to-one neuron assignment, and finally chained transitively across sessions to produce stable global identities.</p>
+
+  <div class="aside">
+    S2C is robust to local non-linearities because it does not rely on a single global transform. Quads are sampled across spatial scales — local neighbourhoods stabilize fine structure, long-range diagonals span the field of view — so the consensus emerges from many small, independent geometric witnesses.
+  </div>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- PIPELINE                     -->
+<!-- ──────────────────────────── -->
+<section class="section" id="pipeline">
+  <h2 class="section-title">The pipeline at a glance</h2>
+
+  <p class="section-content">Five steps. Each step writes a self-contained file that the next step consumes; nothing is kept in memory across steps, so any stage can be re-run in isolation by deleting its outputs.</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 920 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="S2C pipeline flow diagram">
+      <defs>
+        <marker id="flow-w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+        </marker>
+      </defs>
+
+      <g font-family="monospace" font-size="11">
+        <rect x="20" y="60" width="150" height="90" rx="8" fill="#1e1e1e" stroke="#2a2a2a"/>
+        <text x="95" y="85" text-anchor="middle" fill="#fff" font-size="11" letter-spacing="1" font-weight="bold">STEP 1</text>
+        <text x="95" y="108" text-anchor="middle" fill="#ccc" font-size="14" font-family="Inter,sans-serif">Quad generation</text>
+        <text x="95" y="128" text-anchor="middle" fill="#888" font-size="10">centroids → quads</text>
+        <line x1="170" y1="105" x2="195" y2="105" stroke="#666" stroke-width="1" marker-end="url(#flow-w)"/>
+
+        <rect x="200" y="60" width="150" height="90" rx="8" fill="#1e1e1e" stroke="#2a2a2a"/>
+        <text x="275" y="85" text-anchor="middle" fill="#fff" font-size="11" letter-spacing="1" font-weight="bold">STEP 1.5</text>
+        <text x="275" y="108" text-anchor="middle" fill="#ccc" font-size="14" font-family="Inter,sans-serif">Calibration</text>
+        <text x="275" y="128" text-anchor="middle" fill="#888" font-size="10">τ = C·√N</text>
+        <line x1="350" y1="105" x2="375" y2="105" stroke="#666" stroke-width="1" marker-end="url(#flow-w)"/>
+
+        <rect x="380" y="60" width="150" height="90" rx="8" fill="#1e1e1e" stroke="#2a2a2a"/>
+        <text x="455" y="85" text-anchor="middle" fill="#fff" font-size="11" letter-spacing="1" font-weight="bold">STEP 2</text>
+        <text x="455" y="108" text-anchor="middle" fill="#ccc" font-size="14" font-family="Inter,sans-serif">Descriptor match</text>
+        <text x="455" y="128" text-anchor="middle" fill="#888" font-size="10">FAISS NN search</text>
+        <line x1="530" y1="105" x2="555" y2="105" stroke="#666" stroke-width="1" marker-end="url(#flow-w)"/>
+
+        <rect x="560" y="60" width="150" height="90" rx="8" fill="#1e1e1e" stroke="#2a2a2a"/>
+        <text x="635" y="85" text-anchor="middle" fill="#fff" font-size="11" letter-spacing="1" font-weight="bold">STEP 2.5</text>
+        <text x="635" y="108" text-anchor="middle" fill="#ccc" font-size="14" font-family="Inter,sans-serif">RANSAC</text>
+        <text x="635" y="128" text-anchor="middle" fill="#888" font-size="10">geometric filter</text>
+        <line x1="710" y1="105" x2="735" y2="105" stroke="#666" stroke-width="1" marker-end="url(#flow-w)"/>
+
+        <rect x="740" y="60" width="150" height="90" rx="8" fill="#1e1e1e" stroke="#2a2a2a"/>
+        <text x="815" y="85" text-anchor="middle" fill="#fff" font-size="11" letter-spacing="1" font-weight="bold">STEP 3</text>
+        <text x="815" y="108" text-anchor="middle" fill="#ccc" font-size="14" font-family="Inter,sans-serif">Hungarian</text>
+        <text x="815" y="128" text-anchor="middle" fill="#888" font-size="10">+ tracking</text>
+      </g>
+
+      <g font-family="monospace" font-size="9" fill="#666">
+        <text x="95" y="180" text-anchor="middle">_centroids_quads.npz</text>
+        <text x="275" y="180" text-anchor="middle">τ per animal</text>
+        <text x="455" y="180" text-anchor="middle">_matches_light.npz</text>
+        <text x="635" y="180" text-anchor="middle">_filtered_matches.npz</text>
+        <text x="815" y="180" text-anchor="middle">_sweep.npz</text>
+        <text x="815" y="194" text-anchor="middle">_consolidated_tracking.npz</text>
+      </g>
+
+      <g font-family="monospace" font-size="10" fill="#a9a9a9">
+        <text x="95" y="40" text-anchor="middle">in: .npy centroids</text>
+        <text x="815" y="220" text-anchor="middle">out: cross-session identities</text>
+      </g>
+    </svg>
+    <div class="caption"><strong>Figure 2.</strong>The five pipeline stages and the file each one writes. Steps run end-to-end via the GUI or programmatically; each stage caches its results so re-runs only redo what changed.</div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <h3 class="feature-title">Step 1 → 1.5</h3>
+      <p>Per-session quad descriptors are generated once. Step 1.5 then samples a fixed number of quads per pair, sweeps a similarity threshold τ ∈ [0, 1], and fits the scaling law <code>τ = C · √N</code> across an animal's session pairs. C is the per-animal calibration constant; it propagates into Step 2.</p>
+    </div>
+    <div class="feature">
+      <h3 class="feature-title">Step 2 → 2.5 → 3</h3>
+      <p>Step 2 runs FAISS top-1 nearest neighbour search in descriptor space, gated by τ and a geometric consistency filter. Step 2.5 runs vectorised RANSAC over the surviving matches (1,000 candidate transforms estimated in one batched SVD) to find the rigid transform and reject outliers. Step 3 turns the inlier <em>quad</em> matches into a one-to-one <em>neuron</em> assignment via padded Hungarian, with a confidence score per pair and per chained track.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- INPUTS                       -->
+<!-- ──────────────────────────── -->
+<section class="section" id="inputs">
+  <h2 class="section-title">Inputs</h2>
+
+  <p class="section-content">S2C operates on <strong>centroid-based neuron representations</strong>. One <code>.npy</code> file per session, all in a single input directory. The pipeline accepts two formats: a Python dict (recommended) or a raw 3D footprint matrix (the <em>A</em> matrix from CNMF / Suite2p / EXTRACT). Footprints, traces, and other ROI metadata are allowed alongside the centroids, but the pipeline ignores them.</p>
+
+  <h3 class="minihead">File naming</h3>
+  <p class="section-content">Filenames must match the pattern <code>{animal_id}_{session_id}{optional_suffix}.npy</code>. The default regex is:</p>
+  <div class="code-block">^([A-Za-z0-9_]+?)_(\d+)(.*?)\.npy$</div>
+  <p class="section-content">where <code>animal_id</code> is alphanumeric plus underscores (non-greedy), <code>session_id</code> is one or more digits, and the optional suffix is anything else before <code>.npy</code>. The suffix is preserved as part of the session name and is available to the Step 1.5 group regex for FOV grouping.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Filename</th><th>Match?</th><th>Animal</th><th>Session</th></tr></thead>
+      <tbody>
+        <tr><td><code>408021_758519303.npy</code></td><td class="ok">✓</td><td><code>408021</code></td><td><code>758519303</code></td></tr>
+        <tr><td><code>mouse_a_3__fov1.npy</code></td><td class="ok">✓</td><td><code>mouse_a</code></td><td><code>3</code></td></tr>
+        <tr><td><code>Mouse42_3.npy</code></td><td class="ok">✓</td><td><code>Mouse42</code></td><td><code>3</code></td></tr>
+        <tr><td><code>mouse1_session1.npy</code></td><td class="no">✗</td><td colspan="2">session id is not all digits</td></tr>
+        <tr><td><code>408021-758519303.npy</code></td><td class="no">✗</td><td colspan="2">wrong separator (hyphen not underscore)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="section-content"><strong>Heads-up:</strong> if your animal id ends in a digit (e.g. <code>mouse5_3.npy</code>), the non-greedy <code>+?</code> can split at the wrong underscore. Prefer animal ids that end in a letter or underscore.</p>
+
+  <h2 class="subhead">Format 1 — dictionary (recommended)</h2>
+
+  <p class="section-content">A Python dict saved with <code>np.save(..., allow_pickle=True)</code>.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Required keys</h3>
+      <ul class="list">
+        <li><strong><code>centroids_x</code></strong> — array/list of N floats (X coords, pixels)</li>
+        <li><strong><code>centroids_y</code></strong> — array/list of N floats (Y coords, pixels)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Optional &amp; ignored</h3>
+      <ul class="list">
+        <li><strong><code>roi_ids</code></strong> — N unique IDs; defaults to <code>np.arange(N)</code> if absent</li>
+        <li><em>Anything else</em> — <code>subject_id</code>, <code>session_id</code>, footprints, traces, timestamps. Allowed but unread; animal and session names come from the filename, not the dict.</li>
+      </ul>
+    </div>
+  </div>
+
+  <details>
+    <summary>Reference snippet — write a session file</summary>
+    <div class="code-block wrap">import numpy as np
+
+data = {
+    'centroids_x': np.array([123.4, 456.7, 789.0, 234.1]),
+    'centroids_y': np.array([234.5, 567.8, 890.1, 345.2]),
+    'roi_ids':     np.array([0, 1, 2, 3]),   # optional
+}
+
+# filename: animal_id ends before the first _&lt;digits&gt; segment
+np.save('408021_758519303.npy', data, allow_pickle=True)</div>
+  </details>
+
+  <h2 class="subhead">Format 2 — raw 3D footprint matrix</h2>
+
+  <p class="section-content">A 3D <code>numpy</code> array of shape <code>(H, W, N)</code> — the spatial footprints for N neurons. The pipeline auto-extracts centroids and assigns sequential <code>roi_ids</code> via <code>np.arange(N)</code>. Use this only if you already have an A matrix; the dict format is smaller and avoids re-running centroid extraction.</p>
+
+  <h3 class="minihead">Sanity checks</h3>
+  <ul class="list">
+    <li><code>len(centroids_x) == len(centroids_y)</code></li>
+    <li><code>len(roi_ids) == len(centroids_x)</code> if provided</li>
+    <li>N ≥ 4 — sessions with fewer neurons are skipped with a warning</li>
+    <li>ROI IDs unique within each session (if provided)</li>
+    <li>Coordinate system in pixels, consistent across sessions of the same animal</li>
+  </ul>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- OUTPUTS                      -->
+<!-- ──────────────────────────── -->
+<section class="section" id="outputs">
+  <h2 class="section-title">Outputs</h2>
+
+  <p class="section-content">Each step writes a <code>.npz</code> file (or several) into a step-specific subdirectory of the output root. The most useful files for downstream analysis are the Step 3 sweep files (per-pair match results with confidence) and the consolidated tracking file (global neuron identities across sessions).</p>
+
+  <div class="card">
+    <h3>Step 1 — <code>step_1_results/{session_name}_centroids_quads.npz</code></h3>
+    <ul class="list">
+      <li><code>centroids</code> — (N, 2) stacked as (y, x)</li>
+      <li><code>neuron_ids</code> — from input <code>roi_ids</code> or auto-generated</li>
+      <li><code>quad_desc</code> — (Q, 4) the ℝ⁴ descriptors</li>
+      <li><code>quad_idx</code> — (Q, 4) vertex indices into <code>centroids</code></li>
+      <li><code>n_neurons</code>, <code>n_quads</code>, <code>generation_time</code>, <code>generation_method = "diagonal_first"</code></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Step 2 — <code>step_2_results/{pair_name}_matches_light.npz</code></h3>
+    <ul class="list">
+      <li><code>match_indices</code> — (M, 8) int32, concatenated [ref_quad_verts, tgt_quad_verts]</li>
+      <li><code>distances</code> — (M,) float32, descriptor distance for each match</li>
+      <li><code>ref_centroids</code>, <code>target_centroids</code>, <code>n_ref_neurons</code>, <code>n_target_neurons</code></li>
+      <li><code>threshold_used</code>, <code>n_raw_matches</code>, <code>n_filtered_matches</code></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Step 2.5 — <code>step_2_5_results/{pair_name}_filtered_matches.npz</code></h3>
+    <ul class="list">
+      <li><code>match_indices</code>, <code>ref_centroids</code>, <code>tgt_centroids</code> — inliers only</li>
+      <li><code>transform_matrix</code> — (2, 2) refined rigid transform</li>
+      <li><code>transform_translation</code> — (2,)</li>
+      <li><code>max_residual_threshold</code> — persisted from Step 2.5 config; consumed by Step 3</li>
+      <li>Inlier count, rotation, translation magnitude, etc.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Step 3 — <code>step_3_results/{pair_name}_sweep.npz</code></h3>
+    <p>Per-pair match results. (Note: the "sweep" naming is legacy — V3.1 produces a single best assignment, not a true threshold sweep. <code>match_counts</code> and <code>match_rates</code> are constant arrays kept for backward compatibility.)</p>
+    <ul class="list">
+      <li><code>matched_ref_indices</code>, <code>matched_tgt_indices</code> — the assignment</li>
+      <li><code>matched_costs</code> — (M,) float32, combined Hungarian cost</li>
+      <li><strong><code>match_confidence</code></strong> — (M,) float32, [0, 1] score; the right field to threshold on</li>
+      <li><strong><code>match_pass</code></strong> — (M,) int32, 1 = pass-1 Hungarian, 2 = pass-2 recovery</li>
+      <li><code>ref_centroids</code>, <code>tgt_centroids</code>, <code>n_inlier_quads</code>, etc.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Step 3 — <code>step_3_results/{animal_id}_consolidated_tracking.npz</code></h3>
+    <p>Global neuron identities for one animal, chained transitively across all its sessions. <code>neuron_tracks</code> is a Python dict — load with <code>allow_pickle=True</code> and use <code>.item()</code>.</p>
+    <ul class="list">
+      <li><code>sessions</code> — canonical session order</li>
+      <li><code>neuron_tracks</code> — dict[global_id, dict[session_idx, local_idx]]</li>
+      <li><code>track_lengths</code> — sessions each global neuron appears in</li>
+      <li><strong><code>track_confidence</code></strong> — minimum link confidence (weakest-link reliability)</li>
+      <li><strong><code>track_mean_confidence</code></strong> — mean link confidence</li>
+      <li><code>n_total_tracks</code>, <code>full_length_tracks</code>, <code>avg_track_length</code>, <code>max_track_length</code></li>
+    </ul>
+  </div>
+
+  <div class="aside">
+    <strong>Use <code>match_confidence</code>, not raw cost.</strong> Cost values depend on whether quad voting was enabled and which dummy regime ran, so they aren't comparable across runs. <code>match_confidence</code> is normalised to [0, 1] from four signals (vote, distance, assignment margin, pass), making it the natural threshold for downstream analyses.
+  </div>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- TUNING — GOLDILOCKS          -->
+<!-- ──────────────────────────── -->
+<section class="section" id="tuning">
+  <h2 class="section-title">Parameter tuning — a Goldilocks guide</h2>
+
+  <p class="section-content">Calcium imaging data is not uniform. A 100-neuron lateral habenula recording from a head-fixed mouse and a 900-neuron cortical recording from a freely-moving rat produce fundamentally different geometric landscapes. Every parameter exposed below exists because the obvious automated default failed silently somewhere. The cost of a wrong default a user never questions is far higher than the cost of asking you to think for ten minutes.</p>
+
+  <p class="section-content">For each knob below, three states: <strong>too low</strong>, <strong>just right</strong>, <strong>too high</strong>. The middle column is the default and what most datasets want.</p>
+
+  <p class="section-content"><strong>Debug from Step 1.</strong> Bad inputs propagate forward; no amount of Step 3 tuning fixes bad quads.</p>
+
+  <!-- ─── STEP 1 ─── -->
+  <h2 class="subhead" id="step1">Step 1 — Quad generation</h2>
+
+  <p class="section-content">Step 1 enumerates diagonals (KNN local + random long-range), computes perpendicular heights for all other neurons per diagonal, keeps the top-K by height, and pairs those into quads. No triangle enumeration, no <code>C(N,3)</code> blow-up. Each quad is emitted exactly once via an <em>ownership guard</em> — only from the diagonal that <em>is</em> its longest edge.</p>
+
+  <!-- knn_k SVG -->
+  <div class="figure">
+    <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="knn_k Goldilocks illustration">
+      <g font-family="monospace" font-size="10">
+
+        <g transform="translate(20, 30)">
+          <text x="100" y="-10" text-anchor="middle" fill="#666" font-size="10" letter-spacing="1.5">knn_k = 5</text>
+          <circle cx="20" cy="40" r="2.5" fill="#3a3a3a"/>
+          <circle cx="170" cy="20" r="2.5" fill="#3a3a3a"/>
+          <circle cx="40" cy="120" r="2.5" fill="#3a3a3a"/>
+          <circle cx="180" cy="140" r="2.5" fill="#3a3a3a"/>
+          <circle cx="10" cy="160" r="2.5" fill="#3a3a3a"/>
+          <circle cx="160" cy="170" r="2.5" fill="#3a3a3a"/>
+          <circle cx="60" cy="170" r="2.5" fill="#3a3a3a"/>
+          <circle cx="190" cy="80" r="2.5" fill="#3a3a3a"/>
+          <circle cx="30" cy="80" r="2.5" fill="#3a3a3a"/>
+          <line x1="100" y1="100" x2="80" y2="80" stroke="#888" stroke-width="1"/>
+          <line x1="100" y1="100" x2="120" y2="80" stroke="#888" stroke-width="1"/>
+          <line x1="100" y1="100" x2="80" y2="120" stroke="#888" stroke-width="1"/>
+          <line x1="100" y1="100" x2="120" y2="120" stroke="#888" stroke-width="1"/>
+          <line x1="100" y1="100" x2="100" y2="60" stroke="#888" stroke-width="1"/>
+          <circle cx="80" cy="80" r="3" fill="#aaa"/>
+          <circle cx="120" cy="80" r="3" fill="#aaa"/>
+          <circle cx="80" cy="120" r="3" fill="#aaa"/>
+          <circle cx="120" cy="120" r="3" fill="#aaa"/>
+          <circle cx="100" cy="60" r="3" fill="#aaa"/>
+          <circle cx="100" cy="100" r="5" fill="#fff"/>
+          <text x="100" y="200" text-anchor="middle" fill="#888" font-size="10">sparse coverage</text>
+        </g>
+
+        <g transform="translate(260, 30)">
+          <text x="100" y="-10" text-anchor="middle" fill="#fff" font-size="10" letter-spacing="1.5">knn_k = 15</text>
+          <circle cx="20" cy="40" r="2.5" fill="#3a3a3a"/>
+          <circle cx="170" cy="20" r="2.5" fill="#3a3a3a"/>
+          <circle cx="190" cy="80" r="2.5" fill="#3a3a3a"/>
+          <circle cx="10" cy="160" r="2.5" fill="#3a3a3a"/>
+          <g stroke="#fff" stroke-width="0.8" fill="none">
+            <line x1="100" y1="100" x2="80" y2="80"/>
+            <line x1="100" y1="100" x2="120" y2="80"/>
+            <line x1="100" y1="100" x2="80" y2="120"/>
+            <line x1="100" y1="100" x2="120" y2="120"/>
+            <line x1="100" y1="100" x2="100" y2="60"/>
+            <line x1="100" y1="100" x2="100" y2="140"/>
+            <line x1="100" y1="100" x2="60" y2="100"/>
+            <line x1="100" y1="100" x2="140" y2="100"/>
+            <line x1="100" y1="100" x2="60" y2="70"/>
+            <line x1="100" y1="100" x2="140" y2="130"/>
+            <line x1="100" y1="100" x2="50" y2="120"/>
+            <line x1="100" y1="100" x2="150" y2="70"/>
+            <line x1="100" y1="100" x2="70" y2="150"/>
+            <line x1="100" y1="100" x2="130" y2="50"/>
+            <line x1="100" y1="100" x2="150" y2="150"/>
+          </g>
+          <g fill="#fff">
+            <circle cx="80" cy="80" r="3"/>
+            <circle cx="120" cy="80" r="3"/>
+            <circle cx="80" cy="120" r="3"/>
+            <circle cx="120" cy="120" r="3"/>
+            <circle cx="100" cy="60" r="3"/>
+            <circle cx="100" cy="140" r="3"/>
+            <circle cx="60" cy="100" r="3"/>
+            <circle cx="140" cy="100" r="3"/>
+            <circle cx="60" cy="70" r="3"/>
+            <circle cx="140" cy="130" r="3"/>
+            <circle cx="50" cy="120" r="3"/>
+            <circle cx="150" cy="70" r="3"/>
+            <circle cx="70" cy="150" r="3"/>
+            <circle cx="130" cy="50" r="3"/>
+            <circle cx="150" cy="150" r="3"/>
+          </g>
+          <circle cx="100" cy="100" r="5" fill="#fff"/>
+          <text x="100" y="200" text-anchor="middle" fill="#ccc" font-size="10">balanced density</text>
+        </g>
+
+        <g transform="translate(500, 30)">
+          <text x="100" y="-10" text-anchor="middle" fill="#666" font-size="10" letter-spacing="1.5">knn_k = 40</text>
+          <g stroke="#666" stroke-width="0.6">
+            <line x1="100" y1="100" x2="20" y2="40"/>
+            <line x1="100" y1="100" x2="170" y2="20"/>
+            <line x1="100" y1="100" x2="190" y2="80"/>
+            <line x1="100" y1="100" x2="180" y2="140"/>
+            <line x1="100" y1="100" x2="160" y2="170"/>
+            <line x1="100" y1="100" x2="60" y2="170"/>
+            <line x1="100" y1="100" x2="10" y2="160"/>
+            <line x1="100" y1="100" x2="30" y2="80"/>
+            <line x1="100" y1="100" x2="40" y2="120"/>
+            <line x1="100" y1="100" x2="80" y2="80"/>
+            <line x1="100" y1="100" x2="120" y2="80"/>
+            <line x1="100" y1="100" x2="80" y2="120"/>
+            <line x1="100" y1="100" x2="120" y2="120"/>
+            <line x1="100" y1="100" x2="100" y2="60"/>
+            <line x1="100" y1="100" x2="100" y2="140"/>
+            <line x1="100" y1="100" x2="60" y2="100"/>
+            <line x1="100" y1="100" x2="140" y2="100"/>
+            <line x1="100" y1="100" x2="60" y2="70"/>
+            <line x1="100" y1="100" x2="140" y2="130"/>
+            <line x1="100" y1="100" x2="50" y2="120"/>
+            <line x1="100" y1="100" x2="150" y2="70"/>
+            <line x1="100" y1="100" x2="70" y2="150"/>
+            <line x1="100" y1="100" x2="130" y2="50"/>
+            <line x1="100" y1="100" x2="150" y2="150"/>
+            <line x1="100" y1="100" x2="40" y2="40"/>
+            <line x1="100" y1="100" x2="160" y2="40"/>
+            <line x1="100" y1="100" x2="170" y2="100"/>
+            <line x1="100" y1="100" x2="50" y2="50"/>
+            <line x1="100" y1="100" x2="170" y2="160"/>
+            <line x1="100" y1="100" x2="40" y2="160"/>
+          </g>
+          <g fill="#999">
+            <circle cx="20" cy="40" r="2.5"/>
+            <circle cx="170" cy="20" r="2.5"/>
+            <circle cx="190" cy="80" r="2.5"/>
+            <circle cx="180" cy="140" r="2.5"/>
+            <circle cx="160" cy="170" r="2.5"/>
+            <circle cx="60" cy="170" r="2.5"/>
+            <circle cx="10" cy="160" r="2.5"/>
+            <circle cx="30" cy="80" r="2.5"/>
+            <circle cx="40" cy="120" r="2.5"/>
+            <circle cx="80" cy="80" r="2.5"/>
+            <circle cx="120" cy="80" r="2.5"/>
+            <circle cx="80" cy="120" r="2.5"/>
+            <circle cx="120" cy="120" r="2.5"/>
+            <circle cx="100" cy="60" r="2.5"/>
+            <circle cx="100" cy="140" r="2.5"/>
+            <circle cx="60" cy="100" r="2.5"/>
+            <circle cx="140" cy="100" r="2.5"/>
+            <circle cx="60" cy="70" r="2.5"/>
+            <circle cx="140" cy="130" r="2.5"/>
+            <circle cx="50" cy="120" r="2.5"/>
+            <circle cx="150" cy="70" r="2.5"/>
+            <circle cx="70" cy="150" r="2.5"/>
+            <circle cx="130" cy="50" r="2.5"/>
+            <circle cx="150" cy="150" r="2.5"/>
+            <circle cx="40" cy="40" r="2.5"/>
+            <circle cx="160" cy="40" r="2.5"/>
+          </g>
+          <circle cx="100" cy="100" r="5" fill="#fff"/>
+          <text x="100" y="200" text-anchor="middle" fill="#888" font-size="10">saturated &amp; slow</text>
+        </g>
+      </g>
+    </svg>
+    <div class="caption"><strong>Figure 3.</strong>knn_k controls how many local neighbours each neuron forms diagonals with. Long-range diagonals (k_random ≈ knn_k / 2) are added on top.</div>
+  </div>
+
+  <!-- knn_k -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>knn_k</h3>
+      <div class="desc">Local neighbours per neuron used for diagonal generation.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 15</span>
+        <span><strong>Range</strong> 5–100</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — k = 5</div>
+        <div class="value">sparse coverage</div>
+        <div class="body">Neurons in low-density regions of the FOV end up with zero quads. Step 2 can't match them. Coverage remediation fires constantly.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — k = 15</div>
+        <div class="value">100–400 neuron recordings</div>
+        <div class="body">Most neurons participate in hundreds of quads. Coverage remediation barely needs to do anything. Total diagonals scale as N · 1.5k / 2.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — k = 40</div>
+        <div class="value">descriptor space crowds</div>
+        <div class="body">Quad counts approach the saturation cap. Compute scales linearly in k. Similar-looking quads multiply, descriptor crowding inflates false matches.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- max_triangles_per_diagonal -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>max_triangles_per_diagonal (K-cap)</h3>
+      <div class="desc">Top-K third-points per diagonal, ranked by perpendicular height. Quads per diagonal = K(K−1)/2.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 25</span>
+        <span><strong>Range</strong> 2–500</span>
+        <span><strong>Quads/diagonal</strong> 10, 300, 4 950</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — K = 5</div>
+        <div class="value">10 quads/diagonal</div>
+        <div class="body">Only the tallest third-points survive. Selective but you miss subtle geometric relationships. Works for FOVs with &lt; 80 neurons.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — K = 25</div>
+        <div class="value">300 quads/diagonal</div>
+        <div class="body">Captures both prominent and moderate geometric features. Solid tradeoff for 100–500 neuron recordings.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — K = 100</div>
+        <div class="value">4 950 quads/diagonal</div>
+        <div class="body">Captures everything including near-degenerate flat quads close to the diagonal line. Massive counts, descriptor noise, slow matching.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- quad_keep_fraction -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>quad_keep_fraction</h3>
+      <div class="desc">After all quads are generated, rank by descriptor quality |y_C| + |y_D| (third-point distance from diagonal) and keep this fraction.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 1.0</span>
+        <span><strong>Range</strong> 0.0–1.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.1</div>
+        <div class="value">top 10% only</div>
+        <div class="body">Discriminative descriptors but sparse. Some neuron pairs that should match can't because the connecting quads were pruned. Low recall.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 1.0</div>
+        <div class="value">keep everything</div>
+        <div class="body">Let downstream steps do selection. More candidates → higher chance of finding valid matches. Reduce only if you're hitting the saturation cap.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — n/a</div>
+        <div class="value">capped at 1.0</div>
+        <div class="body">Can't go above 1.0. The "wrong" direction here is artificial constraint at moderate values like 0.3–0.5 when not warranted.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- min_pairwise_distance -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>min_pairwise_distance</h3>
+      <div class="desc">Minimum Euclidean distance (px) between any two of the four quad vertices. Quads with closer pairs are dropped.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 0.0 (disabled)</span>
+        <span><strong>Range</strong> 0–100 px</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.0</div>
+        <div class="value">no filter</div>
+        <div class="body">Near-coincident centroids form numerically unstable descriptors that pollute matching. Fine if your centroid extraction is clean.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 2–5 px</div>
+        <div class="value">cleans jitter</div>
+        <div class="body">Removes quads where two neurons are within a few pixels — the regime where descriptors are genuinely numerically unstable. No collateral damage.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 15 px</div>
+        <div class="value">aggressive</div>
+        <div class="body">Removes many valid quads in dense regions. Only justifiable if your extraction has known jitter &gt; 10 px.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- min_coverage_fraction -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>min_coverage_fraction</h3>
+      <div class="desc">Coverage remediation. Neurons whose quad count falls below this fraction of the field median get re-processed with the ownership guard disabled.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 0.4</span>
+        <span><strong>Range</strong> 0.0–1.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.0</div>
+        <div class="value">disabled</div>
+        <div class="body">Neurons starved by the ownership guard stay at zero. Visible as cold spots on the Step 1 viewer's coverage heatmap.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 0.4</div>
+        <div class="value">below 40% of median</div>
+        <div class="body">Catches the worst gaps without inflating quad counts for neurons that are merely below average.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 0.8</div>
+        <div class="value">below 80% of median</div>
+        <div class="body">More uniform coverage but adds many quads. Can push you over the saturation cap on dense recordings.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="minihead">Other Step 1 knobs</h3>
+  <ul class="list">
+    <li><code>session_filename_regex</code> — see <a href="#inputs">Inputs</a> for the default and how to extend it.</li>
+    <li><code>diagonal_rng_seed</code> — default <code>42</code>. Controls long-range diagonal sampling. The KNN local set is fully deterministic. Change essentially never; if changing it produces different results, your quad count is too low (more coverage needed) and a different seed isn't the answer.</li>
+  </ul>
+
+  <!-- ─── STEP 1.5 ─── -->
+  <h2 class="subhead" id="step15">Step 1.5 — Threshold calibration</h2>
+
+  <p class="section-content"><strong>The most commonly misunderstood step.</strong> The "quality" metric here is <em>not</em> a measure of how good your neuron matches are. It is a measure of how well the descriptor distance threshold separates signal from noise <em>in descriptor space</em>. The pipeline sweeps τ ∈ [0, 1], finds the per-pair quality peak, then fits the scaling law:</p>
+
+  <div class="code-block">τ(N) = C · √N</div>
+
+  <p class="section-content">across all session pairs of one animal, yielding the per-animal constant <code>C</code>, its standard deviation <code>C_std</code>, and goodness of fit <code>R²</code>. The <code>√N</code> form is justified because the typical nearest-neighbour distance in descriptor space scales as Q⁻¹ᐟ⁴ ~ N⁻¹ᐟ², so τ must track that to maintain a constant signal-to-noise ratio.</p>
+
+  <div class="aside">
+    <strong>The calibration trap.</strong> For high-N recordings (&gt; 400) with suspiciously high match rates (&gt; 80%): your threshold is probably too loose. <em>Lower</em> <code>target_quality</code> to 0.85 or 0.90 to push τ tighter. Counter-intuitive, but a lower target produces a tighter threshold because it commits to τ at an earlier, more conservative point on the quality curve.
+  </div>
+
+  <!-- target_quality -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>target_quality</h3>
+      <div class="desc">The quality level at which τ is selected. Lower values pick τ earlier on the rising curve → tighter threshold.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 0.95</span>
+        <span><strong>Range</strong> 0.5–1.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.85</div>
+        <div class="value">conservative</div>
+        <div class="body"><em>Tighter</em> τ. Fewer matches, higher precision. Use this for &gt; 400 neuron recordings where descriptor crowding inflates false matches at higher quality settings.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 0.95</div>
+        <div class="value">150–400 neurons</div>
+        <div class="body">Balanced. Picks τ near the quality plateau. Default for typical mid-N recordings.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 0.99</div>
+        <div class="value">permissive</div>
+        <div class="body">Waits for quality to be near-perfect before committing. <em>Looser</em> τ. More matches including borderline ones. Works for &lt; 150 neurons.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- sample_size -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>sample_size</h3>
+      <div class="desc">Quads sampled from each session for calibration. Speed/accuracy tradeoff for calibration only — does not affect the actual matching in Step 2.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 150</span>
+        <span><strong>Range</strong> 10–1 000 000</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 10</div>
+        <div class="value">noisy fit</div>
+        <div class="body"><code>C_std</code> blows up. The √N law can't be fit reliably. Threshold ends up animal-specific in name only.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 150</div>
+        <div class="value">stable C estimate</div>
+        <div class="body">C values stabilise within a few percent of full-data estimates. Calibration runs fast.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 100 000+</div>
+        <div class="value">slow, no payoff</div>
+        <div class="body">Near-exact but slow. Only useful if you need sub-1% C precision for some methodological reason.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- session_pair_strategy -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>session_pair_strategy</h3>
+      <div class="desc">How session pairs are generated within each FOV group.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> all_vs_all</span>
+        <span><strong>Options</strong> consecutive · all_vs_all</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Light — consecutive</div>
+        <div class="value">N − 1 pairs</div>
+        <div class="body">Session 1↔2, 2↔3, 3↔4 ... Fast. Best for longitudinal recordings where adjacent sessions are most similar.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Default — all_vs_all</div>
+        <div class="value">C(N, 2) pairs</div>
+        <div class="body">All within-group pairs. Maximises calibration data and downstream cross-session linking. Slow for &gt; 30 sessions/group.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Capped — max_pairs_per_animal</div>
+        <div class="value">subsample groups</div>
+        <div class="body">If <code>max_pairs_per_animal</code> is set, large groups are randomly subsampled (seed = 42) to fit the cap. Use when all_vs_all is computationally infeasible.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="minihead">Other Step 1.5 knobs</h3>
+  <ul class="list">
+    <li><code>threshold_min / threshold_max / n_threshold_points</code> — defaults <code>0.0 / 1.0 / 50</code>. Widen <code>threshold_max</code> if calibration consistently hits the upper bound. Narrow the range if you know the answer is in a small window and want finer resolution.</li>
+    <li><code>session_group_regex</code> — default <code>r'__(.+)$'</code>. Extracts an FOV group key from session names. Sessions with the same key are paired. Change if your naming convention doesn't use <code>__</code> as the group separator.</li>
+    <li><code>distance_metric</code> — default <code>'cosine'</code>. Cosine is invariant to descriptor magnitude and slightly more robust. <code>'euclidean'</code> is fine if your centroid coordinate frame is consistent across sessions.</li>
+  </ul>
+
+  <!-- ─── STEP 2 ─── -->
+  <h2 class="subhead" id="step2">Step 2 — Descriptor matching</h2>
+
+  <p class="section-content">Step 2 runs FAISS top-1 nearest-neighbour search on L2-normalised descriptors (cosine via <code>IndexFlatIP</code>), keeps matches with descriptor distance below the per-animal calibrated τ, and applies a geometric consistency filter. The result is a set of <em>quad</em>-level correspondences for each session pair — still containing chance collisions that Step 2.5 will reject.</p>
+
+  <!-- consistency_threshold -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>consistency_threshold</h3>
+      <div class="desc">Geometric consistency filter. Rejects matches whose implied transform deviates from the bulk of other matches in the same pair.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 0.8</span>
+        <span><strong>Range</strong> 0.0–1.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.5</div>
+        <div class="value">permissive</div>
+        <div class="body">Allows matches with substantial geometric disagreement. More survive but more are wrong. Loads garbage into Step 2.5.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 0.8</div>
+        <div class="value">moderate</div>
+        <div class="body">Removes the worst outliers while keeping borderline matches that RANSAC can sort out properly.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 0.95</div>
+        <div class="value">strict</div>
+        <div class="body">Only matches in tight geometric agreement survive. Discards valid matches when there's any non-rigid deformation (tissue drift, lens distortion).</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="minihead">Other Step 2 knobs</h3>
+  <ul class="list">
+    <li><code>threshold</code> — default <code>None</code> (use Step 1.5's calibrated τ). Set manually only for debugging or when you have strong reason to believe Step 1.5 produced the wrong value (e.g. <code>R² &lt; 0.5</code>). The right fix is usually re-running Step 1.5 with adjusted parameters.</li>
+  </ul>
+
+  <!-- ─── STEP 2.5 ─── -->
+  <h2 class="subhead" id="step25">Step 2.5 — RANSAC verification</h2>
+
+  <p class="section-content">RANSAC estimates the best <strong>rigid</strong> transform between each session pair from the Step 2 matches. 1,000 candidate transforms are drawn (m = 4 point pairs each), all estimated simultaneously via batched SVD on the cross-covariance matrices, residuals evaluated in float32 chunks sized to ~200 MB working memory, and the best transform is re-estimated on its full inlier set in float64 for precision. The <code>max_residual_threshold</code> used here is persisted into the output NPZ and consumed by Step 3 to set its distance cutoffs.</p>
+
+  <!-- RANSAC residual SVG -->
+  <div class="figure">
+    <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ransac_max_residual Goldilocks illustration">
+      <g font-family="monospace" font-size="10">
+        <!-- LEFT: 2 px -->
+        <g transform="translate(20, 30)">
+          <text x="100" y="-10" text-anchor="middle" fill="#666" font-size="10" letter-spacing="1.5">2 px — too tight</text>
+          <circle cx="100" cy="100" r="60" fill="none" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="100" cy="100" r="14" fill="none" stroke="#888" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="3" fill="#888"/>
+          <circle cx="105" cy="98" r="2.5" fill="#fff"/>
+          <circle cx="115" cy="105" r="2.5" fill="#666"/>
+          <circle cx="92" cy="115" r="2.5" fill="#666"/>
+          <circle cx="125" cy="92" r="2.5" fill="#666"/>
+          <circle cx="80" cy="92" r="2.5" fill="#666"/>
+          <circle cx="140" cy="120" r="2.5" fill="#3a3a3a"/>
+          <circle cx="60" cy="140" r="2.5" fill="#3a3a3a"/>
+          <text x="100" y="200" text-anchor="middle" fill="#888" font-size="10">excludes valid matches</text>
+        </g>
+
+        <!-- MIDDLE: 5 px -->
+        <g transform="translate(260, 30)">
+          <text x="100" y="-10" text-anchor="middle" fill="#fff" font-size="10" letter-spacing="1.5">5 px — just right</text>
+          <circle cx="100" cy="100" r="60" fill="none" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="100" cy="100" r="32" fill="none" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="3" fill="#fff"/>
+          <circle cx="105" cy="98" r="2.5" fill="#fff"/>
+          <circle cx="115" cy="105" r="2.5" fill="#fff"/>
+          <circle cx="92" cy="115" r="2.5" fill="#fff"/>
+          <circle cx="125" cy="92" r="2.5" fill="#fff"/>
+          <circle cx="80" cy="92" r="2.5" fill="#fff"/>
+          <circle cx="140" cy="120" r="2.5" fill="#3a3a3a"/>
+          <circle cx="60" cy="140" r="2.5" fill="#3a3a3a"/>
+          <text x="100" y="200" text-anchor="middle" fill="#ccc" font-size="10">captures real signal</text>
+        </g>
+
+        <!-- RIGHT: 15 px -->
+        <g transform="translate(500, 30)">
+          <text x="100" y="-10" text-anchor="middle" fill="#666" font-size="10" letter-spacing="1.5">15 px — too loose</text>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#888" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="3" fill="#888"/>
+          <circle cx="105" cy="98" r="2.5" fill="#fff"/>
+          <circle cx="115" cy="105" r="2.5" fill="#fff"/>
+          <circle cx="92" cy="115" r="2.5" fill="#fff"/>
+          <circle cx="125" cy="92" r="2.5" fill="#fff"/>
+          <circle cx="80" cy="92" r="2.5" fill="#fff"/>
+          <circle cx="140" cy="120" r="2.5" fill="#888"/>
+          <circle cx="60" cy="140" r="2.5" fill="#888"/>
+          <text x="100" y="200" text-anchor="middle" fill="#888" font-size="10">contaminated by noise</text>
+        </g>
+      </g>
+    </svg>
+    <div class="caption"><strong>Figure 4.</strong>The RANSAC inlier ring. The dot at the centre is a target neuron after applying the candidate transform; white dots inside the ring are inliers; grey dots are outliers. The ring is the residual threshold.</div>
+  </div>
+
+  <!-- ransac_max_residual -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>ransac_max_residual</h3>
+      <div class="desc">Pixel residual threshold for RANSAC inliers. The single most important Step 2.5 parameter — and it propagates into Step 3 via <code>dist_cutoff_multiplier</code> and <code>postfilter_residual_multiplier</code>.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 5.0 px</span>
+        <span><strong>Range</strong> 0.1–100 px</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 2 px</div>
+        <div class="value">very tight</div>
+        <div class="body">Only matches whose transformed centroid lands within 2 px of the target survive. High precision but misses neurons with even moderate centroid jitter. Reasonable only for head-fixed, perfectly stable FOV.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 5 px</div>
+        <div class="value">standard</div>
+        <div class="body">Accommodates typical centroid uncertainty (2–3 px) plus minor session-to-session drift. Good balance for most datasets.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 15 px</div>
+        <div class="value">permissive</div>
+        <div class="body">Many false inliers; the consensus transform itself becomes contaminated. Only use if your sessions have large non-rigid deformations.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ransac_iterations -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>ransac_iterations</h3>
+      <div class="desc">Number of random subsets to try. P(find good subset) = 1 − (1 − wᵐ)ⁿ where w is true inlier ratio.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 1 000</span>
+        <span><strong>Range</strong> 100–10 000</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 100</div>
+        <div class="value">may miss the answer</div>
+        <div class="body">At w = 30% inliers, P(find good subset) ≈ 93%. At 10% inliers, only ≈ 9%. With low inlier ratios, more iterations are essential.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 1 000</div>
+        <div class="value">covers most cases</div>
+        <div class="body">P ≈ 1.0 at w = 30%; P ≈ 63% at w = 10%. With batched SVD this is essentially free.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 10 000</div>
+        <div class="value">diminishing returns</div>
+        <div class="body">10× cost. Only worth it when you've measured w &lt; 5% and still expect a real signal in there.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ransac_min_inlier_ratio -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>ransac_min_inlier_ratio</h3>
+      <div class="desc">Minimum fraction of matches that must agree with the best transform for the result to be accepted.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 0.05</span>
+        <span><strong>Range</strong> 0.0–1.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.01</div>
+        <div class="value">accepts noise</div>
+        <div class="body">Will accept transforms supported by 1% of matches. Risks confidently spurious transforms surviving on heavily contaminated input.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 0.05</div>
+        <div class="value">5% agreement</div>
+        <div class="body">Good default for typical match sets where the true inlier ratio is 10–50%. Decrease to 0.02 if Step 2.5 is rejecting pairs you know should match.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 0.3</div>
+        <div class="value">strict</div>
+        <div class="body">Only accepts very clean match sets. Fails on sessions with many coincidental Step-2 descriptor matches even when the underlying signal is fine.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="minihead">Other Step 2.5 knobs</h3>
+  <ul class="list">
+    <li><code>ransac_allow_scaling</code> — default <code>False</code> (rigid). Set <code>True</code> for similarity transforms (rigid + uniform scale). Useful only when you've changed objective or zoom between sessions.</li>
+    <li><code>ransac_max_rotation_deg</code> — default <code>None</code>. Optional rejection of transforms with rotation magnitude greater than this. Set to ~5° for chronic head-fixed recordings, 30° for moderate scope repositioning, leave <code>None</code> for freely-moving setups.</li>
+    <li><code>ransac_max_translation_px</code> — default <code>None</code>. Optional rejection of transforms with translation magnitude greater than this. For 512×512 chronic windows, &gt; 100 px between sessions is usually spurious.</li>
+  </ul>
+
+  <!-- ─── STEP 3 ─── -->
+  <h2 class="subhead" id="step3">Step 3 — Hungarian assignment + tracking</h2>
+
+  <p class="section-content">Step 3 turns the inlier <em>quad</em>-level correspondences from Step 2.5 into a one-to-one <em>neuron</em> mapping. Each surviving inlier quad votes for its 16 implied neuron pairings (4 ref × 4 tgt). Vote counts are degree-normalised, combined with spatial residual under the inferred transform, padded with rectangular dummy slots so any neuron can opt out of matching, and solved via <code>scipy.optimize.linear_sum_assignment</code>. Pass-1 matches with too much spatial residual are rejected; <strong>pass-2 always runs</strong> on the remaining unmatched neurons under a relaxed cutoff. Every surviving match gets a confidence score in [0, 1].</p>
+
+  <div class="aside">
+    <strong>Use <code>match_confidence</code>, not raw cost.</strong> The score combines four equally-weighted signals — degree-normalised votes, spatial proximity, assignment margin (1st vs 2nd best cost), and pass origin (1.0 for pass-1, 0.5 for pass-2). It's normalised to [0, 1] and comparable across runs in a way that costs aren't.
+  </div>
+
+  <!-- use_quad_voting -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>use_quad_voting</h3>
+      <div class="desc">Cost matrix strategy. True = degree-normalised quad voting + spatial residual. False = pure spatial distance after transform.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> True</span>
+      </div>
+    </div>
+    <div class="gold-grid" style="grid-template-columns:1fr">
+      <div class="gold-cell warm">
+        <div class="label">Just right — True</div>
+        <div class="value">recommended</div>
+        <div class="body">If neurons i and j co-appear in many inlier quads, cost is low. <code>√(degree_i · degree_j)</code> normalisation prevents hub neurons from dominating. Strictly more information than distance alone. <strong>When to set False:</strong> debugging, or when very few inlier quads survive Step 2.5 and the voting signal is unreliable.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- dist_cutoff_multiplier -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>dist_cutoff_multiplier</h3>
+      <div class="desc">Hard distance cutoff. Pairs farther than <code>dist_cutoff_multiplier × ransac_max_residual</code> are assigned infinite cost.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 3.0</span>
+        <span><strong>Range</strong> 1.0–20.0</span>
+        <span><strong>At default residual</strong> 7.5 / 15 / 25 px</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 1.5</div>
+        <div class="value">7.5 px cutoff</div>
+        <div class="body">Only very close pairs can match. Misses neurons with moderate centroid uncertainty. Most cost-matrix entries become infinite.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 3.0</div>
+        <div class="value">15 px cutoff</div>
+        <div class="body">Three RANSAC residuals — captures virtually all true matches while excluding distant noise. Standard.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 5.0</div>
+        <div class="value">25 px cutoff</div>
+        <div class="body">Allows matches between moderately distant pairs. Risk of false matches in dense regions; the Hungarian may force-pair a peripheral neuron to a distant partner.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- postfilter_residual_multiplier -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>postfilter_residual_multiplier</h3>
+      <div class="desc">Pass-1 post-filter. Matches with transformed distance &gt; this × <code>ransac_max_residual</code> are removed after the first Hungarian solve, sent to pass-2 for re-evaluation.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 1.0</span>
+        <span><strong>Range</strong> 0.5–10.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 0.5</div>
+        <div class="value">2.5 px (at default)</div>
+        <div class="body">Very tight. Many valid matches removed and need pass-2 recovery. Pass-2 handles them but with reduced confidence (pass_score = 0.5).</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 1.0</div>
+        <div class="value">5 px (at default)</div>
+        <div class="body">Same cutoff as RANSAC. Matches within one residual of the consensus survive pass-1.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 2.0</div>
+        <div class="value">10 px (at default)</div>
+        <div class="body">Permissive. Less load on pass-2, but more false matches survive pass-1 (and they carry pass-1's higher confidence weight).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- pass2_cutoff_multiplier -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>pass2_cutoff_multiplier</h3>
+      <div class="desc">Distance cutoff for second-pass recovery. Intentionally more relaxed than pass-1 because pass-2 runs on neurons that pass-1 rejected.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 2.0</span>
+        <span><strong>Range</strong> 1.0–10.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 1.5</div>
+        <div class="value">marginal recovery</div>
+        <div class="body">Only slightly looser than pass-1. Recovers a few borderline neurons; the rest go unmatched.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 2.0</div>
+        <div class="value">2× residual</div>
+        <div class="body">Doubles the recovery radius. Catches neurons with moderate centroid drift while keeping the pool small enough that the sub-Hungarian stays fast.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 4.0</div>
+        <div class="value">very relaxed</div>
+        <div class="body">Recovers neurons up to 20 px away (at default residual). Appropriate for non-rigid deformation, risky in dense FOVs.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- pass2_dummy_percentile -->
+  <div class="gold-block">
+    <div class="gold-head">
+      <h3>pass2_dummy_percentile</h3>
+      <div class="desc">Pass-2 sub-Hungarian's dummy cost is set to the Nth percentile of finite costs among unmatched neurons. Higher = harder to leave a neuron unmatched = more aggressive recovery.</div>
+      <div class="gold-meta">
+        <span><strong>Default</strong> 75.0</span>
+        <span><strong>Range</strong> 10.0–99.0</span>
+      </div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-cell cold">
+        <div class="label">Too low — 50</div>
+        <div class="value">conservative</div>
+        <div class="body">Median dummy cost. Only neurons with below-median cost to their best partner get recovered. Many unmatched neurons stay unmatched.</div>
+      </div>
+      <div class="gold-cell warm">
+        <div class="label">Just right — 75</div>
+        <div class="value">balanced</div>
+        <div class="body">Recovers most neurons with a reasonable partner. Default.</div>
+      </div>
+      <div class="gold-cell hot">
+        <div class="label">Too high — 95</div>
+        <div class="value">aggressive</div>
+        <div class="body">Forces matching for almost all unmatched neurons. May produce false matches for genuinely-novel neurons (those that legitimately appear/disappear between sessions).</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="minihead">Other Step 3 knobs</h3>
+  <ul class="list">
+    <li><code>use_asymmetric_dummy_costs</code> — default <code>False</code>. With <code>True</code>, dummy costs scale by per-neuron proximity to a potential partner (FOV-edge neurons can opt out more easily). Enable when you see false matches concentrated at FOV boundaries.</li>
+    <li><code>block_zero_vote_pairs</code> — default <code>False</code>. With <code>True</code>, neurons with zero quad votes between them get infinite cost regardless of distance. Higher precision; risks missing neurons with poor quad coverage. Leave off unless you have very high confidence in your coverage.</li>
+    <li>Legacy: <code>hungarian_cost_min / max / steps</code>, <code>target_match_rate</code> — accepted by the Step 3 entry point for back-compat but ignored in V3.1.</li>
+  </ul>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- ENVIRONMENT                  -->
+<!-- ──────────────────────────── -->
+<section class="section" id="environment">
+  <h2 class="section-title">Environment</h2>
+
+  <p class="section-content">Tested against Python <code>3.11</code>. Conda is recommended for the numerics stack so <code>numpy</code>, <code>scipy</code>, and <code>faiss-cpu</code> come from <code>conda-forge</code> with consistent BLAS bindings.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Conda (numerics)</h3>
+      <div class="code-block wrap">numpy==1.26.4
+scipy==1.13.0
+faiss-cpu</div>
+    </div>
+    <div class="card">
+      <h3>Pip (everything else)</h3>
+      <div class="code-block wrap">matplotlib==3.10.8
+PyQt5==5.15.11
+PyQt5-Qt5==5.15.18
+PyQt5_sip==12.18.0
+pyqtgraph==0.14.0
+scikit-image==0.26.0
+scikit-learn==1.8.0
+tqdm==4.67.3
+Pillow==12.1.1
+ImageIO==2.37.3
+tifffile==2026.3.3
+psutil==7.0.0
+networkx==3.6.1</div>
+    </div>
+  </div>
+
+  <p class="section-content">No example data ships with the repo; the GUI and pipeline are intended to be run on your own session exports.</p>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- DIAGNOSTIC CHECKLIST         -->
+<!-- ──────────────────────────── -->
+<section class="section" id="diagnostic">
+  <h2 class="section-title">Diagnostic checklist</h2>
+
+  <p class="section-content">When results don't look right, work through these in order. Step 1 problems propagate forward; Step 3 tuning won't fix bad quads.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Symptom</th><th>Likely cause &amp; fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>No sessions found in Step 1</strong></td>
+          <td><code>session_filename_regex</code> doesn't match your filenames. Check the logs — every failed match is logged with <code>NO MATCH:</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Quad counts are zero or very low</strong></td>
+          <td>Files aren't in either expected format. Should be a dict with <code>centroids_x / centroids_y</code>, or a 3D <em>A</em> matrix. Logs say <em>Unrecognised file format</em>.</td>
+        </tr>
+        <tr>
+          <td><strong>Quad counts exceed the saturation cap</strong></td>
+          <td>Reduce <code>max_triangles_per_diagonal</code> or <code>quad_keep_fraction</code>. The GUI estimate panel suggests specific values.</td>
+        </tr>
+        <tr>
+          <td><strong>Step 1.5 C ≈ 0 or R² very low</strong></td>
+          <td>Either too few session pairs (need ≥ 3–4), or the threshold sweep range doesn't cover the optimum. Widen <code>threshold_min/max</code>. Check that <code>session_group_regex</code> is grouping FOV-matched sessions correctly.</td>
+        </tr>
+        <tr>
+          <td><strong>Step 2 match rates &gt; 95%</strong></td>
+          <td>Threshold too loose. <em>Lower</em> <code>target_quality</code> (e.g. 0.85). The most common calibration error for high-N recordings.</td>
+        </tr>
+        <tr>
+          <td><strong>Step 2 match rates near zero</strong></td>
+          <td>Threshold too tight, or sessions don't share neurons (different FOVs grouped together). Verify your group regex.</td>
+        </tr>
+        <tr>
+          <td><strong>Step 2.5 inlier ratio &lt; 5%</strong></td>
+          <td>Most quad matches are false. Step 2 threshold issue — go back and tighten. Or increase <code>ransac_iterations</code> if you believe the signal is there.</td>
+        </tr>
+        <tr>
+          <td><strong>Step 3 match rates low despite good RANSAC inlier ratios</strong></td>
+          <td>Cost matrix too restrictive. Increase <code>dist_cutoff_multiplier</code> or enable <code>use_asymmetric_dummy_costs</code>. Check the cost distribution — if mostly infinite, the cutoff is too tight.</td>
+        </tr>
+        <tr>
+          <td><strong>Step 3 produces obvious false matches</strong></td>
+          <td>Look at the <code>match_confidence</code> distribution first — false matches usually cluster at low confidence. Then: enable <code>block_zero_vote_pairs</code>, reduce <code>pass2_dummy_percentile</code>, tighten <code>postfilter_residual_multiplier</code>. If concentrated at FOV edges, enable <code>use_asymmetric_dummy_costs</code>. If mostly <code>match_pass == 2</code>, reduce <code>pass2_cutoff_multiplier</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Tracking shows neurons "appearing" that should have been tracked</strong></td>
+          <td>Pass-2 not reaching far enough. Increase <code>pass2_cutoff_multiplier</code> or <code>pass2_dummy_percentile</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ──────────────────────────── -->
+<!-- CITING                       -->
+<!-- ──────────────────────────── -->
+<section class="section" id="citing">
+  <h2 class="section-title">Citing Stars2Cells</h2>
+  <p class="section-content">A <code>CITATION.cff</code> file in the repo will give GitHub a "Cite this repository" button automatically and standardise how downstream tools format references to S2C. Open an issue if you'd like the citation file drafted to match a particular style.</p>
+</section>
+
+</div>
+
+<footer>
+  <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells_Alpha_Release">GitHub Repository</a>
+  <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells_Alpha_Release/issues">Report Issues</a>
+  <a class="footer-link" href="index.html">Overview</a>
+  <p class="footer-text">© 2025 Ari Peden-Asarch | Neumaier Lab | University of Washington</p>
+</footer>
+
 </body>
 </html>
