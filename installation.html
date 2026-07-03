@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stars2Cells (S2C) | Installation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="S2C_logo.png" />
+  <link rel="apple-touch-icon" href="S2C_logo.png" />
+  <link rel="canonical" href="https://ariasarch.github.io/Stars2Cells/installation.html" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','Helvetica Neue',Arial,sans-serif}
+    body{background:#000;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+    .container{max-width:1000px;width:100%;padding:20px}
+    .header{text-align:center;padding:40px 0 10px}
+    .logo-image{max-width:240px;width:100%;height:auto}
+    .tagline{font-size:22px;color:#a9a9a9;margin:14px 0 6px;font-weight:300}
+    .version-badge{display:inline-block;background:#2a2a2a;color:#ccc;padding:6px 16px;border-radius:20px;font-size:14px;margin-top:10px}
+
+    .nav-tabs{display:flex;justify-content:center;gap:10px;margin:30px 0;border-bottom:2px solid #2a2a2a}
+    .nav-tab{padding:12px 24px;background:transparent;color:#a9a9a9;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:16px;font-weight:500;transition:.3s;margin-bottom:-2px;text-decoration:none;display:inline-block}
+    .nav-tab:hover{color:#fff;background:#1a1a1a}
+    .nav-tab.active{color:#fff;border-bottom-color:#fff}
+
+    .section{margin:40px 0}
+    .section-title{font-size:30px;margin-bottom:16px;color:#fff;position:relative;display:inline-block;font-weight:600}
+    .section-title:after{content:'';position:absolute;left:0;bottom:-8px;width:50px;height:3px;background:#444}
+    .section-content{font-size:18px;line-height:1.8;color:#ccc;margin-bottom:14px}
+
+    .code-block{background:#000;border:1px solid #2a2a2a;border-radius:8px;padding:20px;font-family:Consolas,Monaco,monospace;font-size:14px;color:#ccc;overflow-x:auto;margin:16px 0;white-space:pre-wrap}
+
+    .note{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:18px;color:#a9a9a9;margin-top:14px}
+    .note strong{color:#fff}
+
+    /* download cards */
+    .download-grid{display:flex;gap:20px;flex-wrap:wrap;margin-top:24px}
+    .os-card{flex:1;min-width:280px;background:#141414;border:1px solid #2a2a2a;border-radius:14px;padding:26px;display:flex;flex-direction:column}
+    .os-card h3{font-size:22px;font-weight:600;margin-bottom:4px}
+    .os-card .os-sub{font-size:14px;color:#888;margin-bottom:18px}
+    .btn{display:inline-block;background:#fff;color:#000;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;text-align:center;transition:.2s}
+    .btn:hover{background:#d0d0d0}
+    .btn-secondary{background:transparent;color:#fff;border:1px solid #3a3a3a;margin-top:10px}
+    .btn-secondary:hover{background:#1f1f1f}
+    .os-note{font-size:13px;color:#777;line-height:1.6;margin-top:14px}
+    .os-note strong{color:#bbb}
+    .releases-link{text-align:center;margin-top:22px;font-size:15px}
+    .releases-link a{color:#a9a9a9;text-decoration:underline}
+    .releases-link a:hover{color:#fff}
+
+    footer{margin-top:auto;width:100%;background:#000;padding:30px 0;text-align:center;border-top:1px solid #2a2a2a}
+    .footer-link{color:#a9a9a9;text-decoration:none}
+    .footer-link:hover{color:#fff}
+
+    @media (max-width:768px){
+      .logo-image{max-width:200px}
+      .tagline{font-size:20px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <img src="S2C_logo.png" alt="Stars2Cells (S2C) logo" class="logo-image" />
+      <p class="tagline">Installation</p>
+      <span class="version-badge">v1.0.0 &bull; Download &amp; run &mdash; no Python required</span>
+    </header>
+
+    <nav class="nav-tabs">
+      <a class="nav-tab" href="index.html">Overview</a>
+      <a class="nav-tab" href="docs.html">Documentation</a>
+      <a class="nav-tab active" href="installation.html">Installation</a>
+      <a class="nav-tab" href="resources.html">Resources</a>
+    </nav>
+
+    <!-- ============================================================= -->
+    <!-- DOWNLOADS (top) -->
+    <!-- ============================================================= -->
+    <section class="section">
+      <h2 class="section-title">Download</h2>
+      <p class="section-content">
+        Stars2Cells now ships as a standalone application &mdash; Python and every
+        dependency are bundled inside. Download the file for your system, open it,
+        and double-click. No Conda, no pip, nothing to install.
+      </p>
+
+      <div class="download-grid">
+
+        <!-- macOS -->
+        <div class="os-card">
+          <h3>macOS</h3>
+          <div class="os-sub">Apple Silicon (M1/M2/M3/M4) &bull; arm64</div>
+          <a class="btn" href="https://github.com/ariasarch/Stars2Cells/releases/download/v1.0.0/Stars2Cells_1.0.0_macos_arm64.dmg">Download .dmg</a>
+          <a class="btn btn-secondary" href="https://github.com/ariasarch/Stars2Cells/releases/download/v1.0.0/Stars2Cells_1.0.0_macos_arm64.zip">Download .zip</a>
+          <div class="os-note">
+            Open the <strong>.dmg</strong> and drag <strong>Stars2Cells.app</strong> out, then double-click it.
+            If macOS says &ldquo;unidentified developer,&rdquo; right-click the app &rarr; <strong>Open</strong> once.
+            On an Intel Mac? Run from source below (an x86_64 build isn&rsquo;t posted yet).
+          </div>
+        </div>
+
+        <!-- Windows -->
+        <div class="os-card">
+          <h3>Windows</h3>
+          <div class="os-sub">64-bit &bull; x64</div>
+          <a class="btn" href="https://github.com/ariasarch/Stars2Cells/releases/download/v1.0.0/Stars2Cells_1.0.0_windows_x64.zip">Download .zip</a>
+          <div class="os-note">
+            Unzip anywhere, open the <strong>Stars2Cells</strong> folder, and run
+            <strong>Stars2Cells.exe</strong>. If SmartScreen appears, click
+            <strong>More info &rarr; Run anyway</strong> once. The
+            <strong>Launch&nbsp;Stars2Cells.bat</strong> next to the exe adds
+            auto-restart-on-crash if you want it.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="releases-link">
+        All files, checksums, and past versions live on the
+        <a href="https://github.com/ariasarch/Stars2Cells/releases">GitHub Releases page</a>.
+      </div>
+
+      <div class="note">
+        <strong>Which file do I pick?</strong>
+        Mac users: grab the <strong>.dmg</strong> &mdash; it&rsquo;s the cleanest install and
+        keeps the app&rsquo;s signature intact. The <strong>.zip</strong> is there as a fallback.
+        Windows users: the <strong>.zip</strong> is the only file you need &mdash; ship the whole
+        folder, not just the .exe.
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- FROM SOURCE (below) -->
+    <!-- ============================================================= -->
+    <section class="section">
+      <h2 class="section-title">Run from source</h2>
+      <p class="section-content">
+        Prefer to run the code directly &mdash; e.g. on an Intel Mac, on Linux, or to
+        modify the pipeline? Clone the repository and run it in a Python environment.
+      </p>
+
+      <div class="note">
+        <strong>Note:</strong>
+        The steps below use Conda because it&rsquo;s the most reproducible for scientific
+        stacks &mdash; numpy, scipy, and faiss install as prebuilt binaries instead of
+        compiling from source.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Quick start (Conda)</h2>
+      <p class="section-content">
+        Recommended for most source users. This creates an isolated environment so
+        Stars2Cells dependencies don&rsquo;t affect other projects.
+      </p>
+
+      <div class="code-block">
+# 1) Clone the repository
+git clone https://github.com/ariasarch/Stars2Cells_GUI.git
+cd Stars2Cells_GUI
+
+# 2) Create and activate an environment (Python 3.12 recommended)
+conda create -n s2c python=3.12 -y
+conda activate s2c
+
+# 3) Install the conda-managed scientific deps first, then the rest
+conda install -c conda-forge numpy=1.26.4 scipy=1.13.0 faiss-cpu -y
+pip install -r requirements.txt
+
+# 4) Launch the app
+python stars2cells.py
+      </div>
+
+      <div class="note">
+        <strong>Tip:</strong>
+        For auto-restart-on-crash while running from source, use the bundled launcher
+        instead of step 4 &mdash;
+        <span style="color:#fff;">./launch_s2c.command</span> on macOS/Linux or
+        <span style="color:#fff;">launch_s2c.bat</span> on Windows.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Quick start (pip + venv)</h2>
+      <p class="section-content">
+        If you don&rsquo;t use Conda, you can use Python venv &mdash; but you&rsquo;ll need numpy,
+        scipy, and faiss-cpu available as wheels for your Python version (3.12 is the
+        safe choice; 3.13 has no wheels for the pinned versions and will try to compile).
+      </p>
+
+      <div class="code-block">
+# 1) Clone the repository
+git clone https://github.com/ariasarch/Stars2Cells_GUI.git
+cd Stars2Cells_GUI
+
+# 2) Create and activate a virtual environment (use a Python 3.12 interpreter)
+python3.12 -m venv .venv
+# macOS / Linux:
+source .venv/bin/activate
+# Windows (PowerShell):
+# .venv\Scripts\Activate.ps1
+
+# 3) Install dependencies
+pip install numpy==1.26.4 scipy==1.13.0 faiss-cpu
+pip install -r requirements.txt
+
+# 4) Launch the app
+python stars2cells.py
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Recommended environment</h2>
+      <p class="section-content">
+        Python 3.12 is recommended (3.10&ndash;3.12 supported). Stars2Cells depends on
+        common scientific Python packages plus PyQt5 for the interface. The packaged
+        downloads above already contain all of this &mdash; the source route is only for
+        development or unsupported platforms.
+      </p>
+    </section>
+  </div>
+
+  <footer>
+    <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells/releases">Download</a>
+    &nbsp;&bull;&nbsp;
+    <a class="footer-link" href="https://github.com/ariasarch/Stars2Cells_GUI">Source</a>
+    <div style="margin-top:12px;color:#666;font-size:14px;">&copy; 2026 Ari Peden-Asarch &bull; Stars2Cells (S2C)</div>
+  </footer>
+</body>
+</html>
